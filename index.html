@@ -672,6 +672,40 @@ function today() { return new Date().toISOString().split('T')[0]; }
 function now() { return new Date().toLocaleString('zh-CN', { hour12: false }); }
 function formatDate(d) { return d ? new Date(d).toLocaleDateString('zh-CN') : '-'; }
 function daysBetween(d1, d2) { if (!d1 || !d2) return 0; return Math.ceil(Math.abs(new Date(d2) - new Date(d1)) / 86400000); }
+
+// 精确计费天数：24小时=1天，3天以上最后一天可延长6小时（30小时算3天），超过6小时多算1天
+function calcBillingDays(checkIn, checkOut) {
+  if (!checkIn || !checkOut) return 0;
+  var inMs = new Date(checkIn).getTime();
+  var outMs = new Date(checkOut).getTime();
+  if (isNaN(inMs) || isNaN(outMs) || outMs <= inMs) return 0;
+  var totalHours = (outMs - inMs) / 3600000; // 总小时数
+  var baseDays = Math.floor(totalHours / 24); // 整天天数
+  var remainHours = totalHours - baseDays * 24; // 剩余小时
+
+  if (baseDays >= 3) {
+    // 3天以上：最后一天可延长6小时（剩余≤6小时不额外计费）
+    if (remainHours > 6) {
+      baseDays += 1; // 超过6小时，多算一天
+    }
+    // remainHours ≤ 6 不额外加天
+  } else {
+    // 不足3天：超过24小时的剩余时间，有任何超出就多算一天
+    if (remainHours > 0) {
+      baseDays += 1;
+    }
+  }
+  return baseDays;
+}
+
+// 获取入住和退房的精确小时数（用于显示）
+function getStayHours(checkIn, checkOut) {
+  if (!checkIn || !checkOut) return 0;
+  var inMs = new Date(checkIn).getTime();
+  var outMs = new Date(checkOut).getTime();
+  if (isNaN(inMs) || isNaN(outMs)) return 0;
+  return Math.round((outMs - inMs) / 3600000 * 10) / 10;
+}
 function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
 function showToast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2500); }
 function closeModal(id) { $(id).classList.remove('show'); }
@@ -1497,7 +1531,9 @@ function openCheckout(orderId) {
   if (!order) return;
   var room = DB.rooms[order.roomId];
   var checkOutDate = today();
-  var days = daysBetween(order.actualCheckIn||order.checkIn, checkOutDate);
+  var checkInDate = order.actualCheckIn || order.checkIn;
+  var days = calcBillingDays(checkInDate, checkOutDate);
+  var stayHours = getStayHours(checkInDate, checkOutDate);
   var area = order.area || 'big';
   var dogCount = order.dogCount || 1;
   
@@ -1539,8 +1575,10 @@ function openCheckout(orderId) {
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">'
     + '<div><strong>入住：</strong>' + formatDate(order.actualCheckIn||order.checkIn) + '</div>'
     + '<div><strong>退房：</strong>' + formatDate(checkOutDate) + '</div>'
-    + '<div><strong>天数：</strong>' + days + '天</div>'
-    + '<div><strong>单价：</strong>¥' + dailyPrice + '/天' + (isHol?' 🔥假日':'') + (discount<1?' ×'+(discount*100)+'%':'') + '</div></div>'
+    + '<div><strong>入住时长：</strong>' + stayHours + '小时</div>'
+    + '<div><strong>计费天数：</strong>' + days + '天</div>'
+    + '<div><strong>单价：</strong>¥' + dailyPrice + '/天' + (isHol?' 🔥假日':'') + (discount<1?' ×'+(discount*100)+'%':'') + '</div>'
+    + '<div style="font-size:12px;color:var(--gray)">💡 24小时=1天，3天以上最后一天可延长6小时</div></div>'
     + '<div class="form-row"><div class="form-group"><label>狗狗数量</label><input type="number" id="ckDogCount" value="' + dogCount + '" min="1" oninput="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')"></div>'
     + '<div class="form-group"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="ckMonthly" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto"' + (isMonthly?' checked':'') + '>包月 ¥' + getMonthlyPrice(room.type) + '</label><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="ckYearly" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto"' + (isYearly?' checked':'') + '>包年 ¥' + getYearlyPrice(room.type) + '</label></div></div>'
     + '<div class="form-group"><label>寄养房费（' + days + '天）</label><input type="number" id="ckRoomFee" value="' + showRoomFee + '" readonly></div>'
@@ -1613,7 +1651,7 @@ function confirmCheckout() {
   var order = DB.orders.find(function(o){return o.id===currentCheckoutOrderId;});
   if (!order) return;
   var room = DB.rooms[order.roomId];
-  var days = daysBetween(order.actualCheckIn||order.checkIn, today());
+  var days = calcBillingDays(order.actualCheckIn||order.checkIn, today());
   var area = order.area || 'big';
   var isMonthly = $('ckMonthly').checked;
   var isYearly = $('ckYearly').checked;
