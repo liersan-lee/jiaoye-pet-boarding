@@ -2,10 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="郊野宠物寄养工作台">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="郊野宠物寄养">
 <meta name="theme-color" content="#357ABD">
 <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuWuoOeJqeWvjOWFt+euoeeQhuW3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5a6g54mp5a+M5YW3IiwKICAic3RhcnRfdXJsIjogIi4v5a6g54mp5a+M5YW35bel5L2c5Y+wLmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMzNTdBQkQiLAogICJ0aGVtZV9jb2xvciI6ICIjMzU3QUJEIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBuYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNuSUhCeVpYTnpjMjlrYVc1bk9uUnlkV1Y5CiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBuYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNuSUhCeVpYTnpjMjlrYVc1bk9uUnlkV1Y5CiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23357ABD'/><text x='50' y='65' font-size='55' text-anchor='middle'>🐾</text></svg>">
@@ -226,9 +227,70 @@ body.mode-view input[type=search] { pointer-events: auto; background: var(--whit
 body.mode-view .view-badge { display: inline-block; }
 /* 查看模式：底部导航栏隐藏设置 */
 body.mode-view .bn-item-settings { display: none !important; }
+
+/* ===== 语音输入按钮 ===== */
+.voice-btn{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;flex-shrink:0}
+.voice-btn:hover{background:var(--primary-dark);transform:scale(1.05)}
+.voice-btn.recording{background:var(--danger);animation:voicePulse 1s infinite}
+@keyframes voicePulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.5)}70%{box-shadow:0 0 0 12px rgba(231,76,60,0)}100%{box-shadow:0 0 0 0 rgba(231,76,60,0)}}
+.topbar .voice-btn{margin-left:8px}
+.bottom-nav .bn-voice{flex:0 0 auto;padding:4px 12px}
+
+/* ===== 语音浮层 ===== */
+.voice-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:3000;align-items:center;justify-content:center}
+.voice-overlay.show{display:flex}
+.voice-modal{background:#fff;border-radius:16px;padding:32px 24px;width:90%;max-width:400px;text-align:center;animation:voiceSlide .3s}
+@keyframes voiceSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.voice-modal .icon-wrap{width:72px;height:72px;margin:0 auto 16px;border-radius:50%;background:var(--danger);display:flex;align-items:center;justify-content:center;font-size:36px;animation:voicePulse 1s infinite}
+.voice-modal .title{font-size:18px;font-weight:700;margin-bottom:8px}
+.voice-modal .subtitle{font-size:14px;color:var(--gray);margin-bottom:16px}
+.voice-modal .result-text{min-height:60px;padding:16px;background:var(--gray-lighter);border-radius:8px;font-size:16px;line-height:1.6;margin-bottom:16px;word-break:break-all}
+.voice-modal .result-text.placeholder{color:var(--gray)}
+.voice-modal .btns{display:flex;gap:8px;justify-content:center}
+.voice-modal .btns .btn{flex:1}
+.voice-wave{display:flex;gap:3px;align-items:center;justify-content:center;height:30px;margin-bottom:12px}
+.voice-wave span{display:block;width:4px;height:12px;background:var(--primary);border-radius:2px;animation:wave 1s infinite ease-in-out}
+.voice-wave span:nth-child(2){animation-delay:.1s}
+.voice-wave span:nth-child(3){animation-delay:.2s}
+.voice-wave span:nth-child(4){animation-delay:.3s}
+.voice-wave span:nth-child(5){animation-delay:.4s}
+@keyframes wave{0%,100%{height:8px}50%{height:28px}}
+
+/* ===== 地图位置相关 ===== */
+.map-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:6px;background:#E3F2FD;color:var(--primary);border:1px solid var(--primary-light);cursor:pointer;font-size:13px;transition:all .2s;white-space:nowrap}
+.map-btn:hover{background:var(--primary);color:#fff}
+.map-btn .icon{font-size:16px}
+.location-row{display:flex;gap:8px;align-items:flex-start}
+.location-row input{flex:1}
+.location-row .map-btn{flex-shrink:0;margin-top:5px}
+.cust-location{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;color:var(--gray)}
+.cust-location a{color:var(--primary);text-decoration:none}
+.cust-location a:hover{text-decoration:underline}
+
+/* ===== PWA APP 全屏适配 ===== */
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.topbar{padding-top:env(safe-area-inset-top);height:calc(60px + env(safe-area-inset-top))}
+.bottom-nav{padding-bottom:env(safe-area-inset-bottom)}
+/* APP 启动闪屏 */
+.app-splash{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#357ABD,#4A90D9);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;transition:opacity .5s}
+.app-splash .logo{font-size:64px;margin-bottom:16px;animation:splashPulse 1.5s ease-in-out infinite}
+.app-splash .title{color:#fff;font-size:22px;font-weight:700}
+.app-splash .sub{color:rgba(255,255,255,.7);font-size:14px;margin-top:8px}
+.app-splash.hide{opacity:0;pointer-events:none}
+@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 </style>
 </head>
 <body>
+<!-- APP 启动闪屏 -->
+<div class="app-splash" id="appSplash">
+  <div class="logo">🐾</div>
+  <div class="title">郊野宠物寄养工作台</div>
+  <div class="sub">正在加载...</div>
+</div>
+<script>
+// 启动闪屏隐藏
+setTimeout(function(){var s=document.getElementById('appSplash');if(s){s.classList.add('hide');setTimeout(function(){s.remove()},600)}},800);
+</script>
 <script>
 // 检测模式：?mode=view → 查看模式，否则编辑模式
 var APP_MODE = (function() {
@@ -252,12 +314,16 @@ if (APP_MODE === 'view') {
     <div class="nav-item edit-only" onclick="switchPage('settings')">⚙️ 设置</div>
     <div class="nav-item edit-only" onclick="showInstallPrompt()" title="安装到桌面" style="background:rgba(255,255,255,0.12)">📲 安装APP</div>
   </div>
-  <div class="date" id="topDate"></div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="voice-btn" id="topVoiceBtn" onclick="toggleVoice()" title="语音输入">🎤</button>
+    <div class="date" id="topDate"></div>
+  </div>
 </div>
 <!-- 底部导航（手机端显示） -->
 <div class="bottom-nav">
   <div class="bn-item active" onclick="switchPage('dashboard')"><span class="icon">📊</span>看板</div>
   <div class="bn-item" onclick="switchPage('booking')"><span class="icon">🏠</span>订房</div>
+  <div class="bn-voice"><button class="voice-btn" onclick="toggleVoice()" title="语音输入">🎤</button></div>
   <div class="bn-item" onclick="switchPage('food')"><span class="icon">🦴</span>狗粮</div>
   <div class="bn-item" onclick="switchPage('customer')"><span class="icon">🐕</span>客户</div>
   <div class="bn-item bn-item-settings edit-only" onclick="switchPage('settings')"><span class="icon">⚙️</span>设置</div>
@@ -397,6 +463,21 @@ if (APP_MODE === 'view') {
 
 <div class="toast" id="toast"></div>
 <div class="confirm-overlay" id="confirmOverlay"><div class="confirm-box"><div class="icon" id="confirmIcon">⚠️</div><div class="title" id="confirmTitle">确认操作</div><div class="msg" id="confirmMsg">确定要执行此操作吗？</div><div class="actions"><button class="btn btn-outline" onclick="closeConfirm()">取消</button><button class="btn btn-danger" id="confirmBtn">确认</button></div></div></div>
+
+<!-- 语音输入浮层 -->
+<div class="voice-overlay" id="voiceOverlay">
+  <div class="voice-modal">
+    <div class="icon-wrap" id="voiceIconWrap">🎤</div>
+    <div class="voice-wave" id="voiceWave" style="display:none"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="title" id="voiceTitle">正在聆听...</div>
+    <div class="subtitle" id="voiceSubtitle">请说话，识别完成后点击确认</div>
+    <div class="result-text placeholder" id="voiceResult">等待语音输入...</div>
+    <div class="btns">
+      <button class="btn btn-outline" onclick="cancelVoice()">取消</button>
+      <button class="btn btn-primary" onclick="confirmVoice()">确认</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ==================== 房间配置 ====================
@@ -953,7 +1034,7 @@ function openNewBooking(roomId) {
     + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkNeedCityPickup" onchange="toggleCityPickup()" style="width:auto;margin-right:6px">🚗 需要市内接送</label></div>'
     + '<div id="bkCityPickupDetail" style="display:none">'
     + '<div class="form-row"><div class="form-group"><label>接送方向</label><select id="bkCityPickupDir" onchange="updatePickupEstimate()"><option value="in">只接来</option><option value="out">只送回</option><option value="both">接送都需</option></select></div>'
-    + '<div class="form-group"><label>接送地址</label><input type="text" id="bkCityPickupAddr" placeholder="家庭地址"></div></div>'
+    + '<div class="form-group"><label>接送地址</label><div class="location-row"><input type="text" id="bkCityPickupAddr" placeholder="家庭地址"><button class="map-btn" type="button" onclick="pickLocation(\'bkCityPickupAddr\',\'bkCityPickupLatLng\')"><span class="icon">📍</span></button></div><input type="hidden" id="bkCityPickupLatLng"></div></div>'
     + '<div class="form-group" style="font-size:12px;color:var(--gray);margin-top:-8px" id="bkCityPickupEstimate"></div>'
     + '</div>'
     + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkNeedAirportPickup" onchange="toggleAirportPickup()" style="width:auto;margin-right:6px">✈️ 需要接送机</label></div>'
@@ -1904,7 +1985,11 @@ function renderCustomers() {
       var ageStr = d.birthday ? ' · ' + calcAge(d.birthday) : '';
       return '<span class="badge badge-info" style="margin-right:4px">🐶 ' + d.name + (d.breed?' · '+d.breed:'') + ageStr + '</span>';
     }).join('');
-    html += '<div class="customer-card"><div class="avatar">👤</div><div class="info"><div class="name">' + c.ownerName + ' <span style="font-size:13px;color:var(--gray)">· ' + c.phone + '</span></div><div class="detail">到访' + (c.visitCount||0) + '次 · 首次' + formatDate(c.firstVisit) + ' · 最近' + formatDate(c.lastVisit) + '</div><div style="margin-top:6px">' + dogHtml + '</div></div><div class="actions"><button class="btn btn-outline btn-sm" onclick="viewCustomer(\'' + c.id + '\')">详情</button><button class="btn btn-primary btn-sm edit-only" onclick="editCustomer(\'' + c.id + '\')">编辑</button><button class="btn btn-danger btn-sm edit-only" onclick="deleteCustomer(\'' + c.id + '\')">删除</button></div></div>';
+    var locHtml = '';
+    if (c.address || c.latLng) {
+      locHtml = '<div class="cust-location">📍 ' + (c.address||'已标记位置') + ' <a href="javascript:void(0)" onclick="viewLocation(\'' + c.id + '\')">查看地图</a> <a href="javascript:void(0)" onclick="shareLocation(\'' + c.id + '\')" style="margin-left:4px">📤分享</a></div>';
+    }
+    html += '<div class="customer-card"><div class="avatar">👤</div><div class="info"><div class="name">' + c.ownerName + ' <span style="font-size:13px;color:var(--gray)">· ' + c.phone + '</span></div><div class="detail">到访' + (c.visitCount||0) + '次 · 首次' + formatDate(c.firstVisit) + ' · 最近' + formatDate(c.lastVisit) + '</div><div style="margin-top:6px">' + dogHtml + '</div>' + locHtml + '</div><div class="actions"><button class="btn btn-outline btn-sm" onclick="viewCustomer(\'' + c.id + '\')">详情</button><button class="btn btn-primary btn-sm edit-only" onclick="editCustomer(\'' + c.id + '\')">编辑</button><button class="btn btn-danger btn-sm edit-only" onclick="deleteCustomer(\'' + c.id + '\')">删除</button></div></div>';
   });
   $('customerList').innerHTML = html;
 }
@@ -1947,6 +2032,8 @@ function renderCustomerForm(c) {
     + '<div class="form-group"><label>联系电话 <span class="required">*</span></label><input type="tel" id="custPhone" value="' + (c.phone||'') + '" placeholder="手机号"></div></div>'
     + '<div class="form-row"><div class="form-group"><label>身份证号</label><input type="text" id="custIdCard" value="' + (c.idCard||'') + '" placeholder="身份证号（选填）"></div>'
     + '<div class="form-group"><label>客户区域</label><select id="custArea"><option value="big"' + (c.area==='big'?' selected':'') + '>大狗区</option><option value="small"' + (c.area==='small'?' selected':'') + '>小狗区</option></select></div></div>'
+    + '<div class="form-row"><div class="form-group"><label>📍 地址位置</label><div class="location-row"><input type="text" id="custAddress" value="' + (c.address||'') + '" placeholder="地址（选填）"><button class="map-btn" onclick="pickLocation(\'custAddress\',\'custLatLng\')"><span class="icon">📍</span>定位</button></div><input type="hidden" id="custLatLng" value="' + (c.latLng||'') + '">'
+    + '<div class="form-group"><label>📝 备注</label><textarea id="custNotes" rows="2" placeholder="客户备注（选填）">' + (c.notes||'') + '</textarea></div></div>'
     + '<hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-light)">'
     + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><strong>🐶 狗狗信息</strong><button class="btn btn-primary btn-sm" onclick="addDogRow()">➕ 添加狗狗</button></div>'
     + '<div id="dogRows">' + dogRows + '</div>';
@@ -1985,6 +2072,9 @@ function saveCustomer() {
   var name = $('custName').value.trim();
   var phone = $('custPhone').value.trim();
   var idCard = $('custIdCard').value.trim();
+  var address = $('custAddress').value.trim();
+  var latLng = $('custLatLng').value.trim();
+  var notes = $('custNotes').value.trim();
   if (!name) { showToast('请填主人姓名'); return; }
   if (!phone) { showToast('请填电话'); return; }
   var dogs = [];
@@ -2005,9 +2095,9 @@ function saveCustomer() {
   if (dogs.length === 0) { showToast('至少填一只狗狗'); return; }
   if (id) {
     var c = DB.customers.find(function(x){return x.id===id;});
-    if (c) { c.ownerName=name; c.phone=phone; c.idCard=idCard; c.area=$('custArea').value; c.dogs=dogs; c.notes=$('custNotes').value.trim(); }
+    if (c) { c.ownerName=name; c.phone=phone; c.idCard=idCard; c.area=$('custArea').value; c.dogs=dogs; c.address=address; c.latLng=latLng; c.notes=notes; }
   } else {
-    DB.customers.push({ id:genId(), ownerName:name, phone:phone, idCard:idCard, area:$('custArea').value, dogs:dogs, visitCount:0, firstVisit:null, lastVisit:null, notes:$('custNotes').value.trim(), createdAt:now() });
+    DB.customers.push({ id:genId(), ownerName:name, phone:phone, idCard:idCard, area:$('custArea').value, dogs:dogs, visitCount:0, firstVisit:null, lastVisit:null, address:address, latLng:latLng, notes:notes, createdAt:now() });
   }
   saveDB(); closeModal('modalCustomer'); renderCustomers(); showToast('客户档案已保存');
 }
@@ -2042,10 +2132,89 @@ function viewCustomer(id) {
     html += '</tbody></table>';
   }
   if (c.notes) html += '<div class="alert alert-warning"><strong>备注：</strong>'+c.notes+'</div>';
+  if (c.address || c.latLng) {
+    var mapUrl = buildMapUrl(c.latLng, c.ownerName, c.address);
+    html += '<div class="alert alert-info" style="margin-top:12px"><strong>📍 地址位置</strong><br>'+(c.address||'已标记位置')+'<br><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><a href="'+mapUrl+'" target="_blank" class="btn btn-primary btn-sm">📍 查看地图</a><button class="btn btn-outline btn-sm" onclick="shareLocation(\''+c.id+'\')">📤 分享位置</button></div></div>';
+  }
   $('modalRoomTitle').textContent = '客户详情';
   $('modalRoomBody').innerHTML = html;
   $('modalRoomFooter').innerHTML = '<button class="btn btn-outline" onclick="closeModal(\'modalRoom\')">关闭</button>';
   $('modalRoom').classList.add('show');
+}
+
+// ===== 地图位置功能 =====
+function buildMapUrl(latLng, title, addr) {
+  if (latLng) {
+    var parts = latLng.split(',');
+    var lat = parts[0]||'';
+    var lng = parts[1]||'';
+    return 'https://apis.map.qq.com/uri/v1/marker?marker=coord:'+lat+','+lng+';title:'+(title||'')+';addr:'+(addr||'')+'&referer=jiaoye';
+  }
+  // 没有坐标，用地址搜索
+  return 'https://apis.map.qq.com/uri/v1/search?keyword='+encodeURIComponent(addr||'')+'&referer=jiaoye';
+}
+
+function pickLocation(addrId, latLngId) {
+  var addr = $(addrId).value.trim();
+  var latLng = $(latLngId).value.trim();
+  // 如果已有坐标，打开标记地图让用户重新选
+  // 否则打开搜索页面让用户选地址
+  var url;
+  if (latLng) {
+    var parts = latLng.split(',');
+    url = 'https://apis.map.qq.com/uri/v1/locationpicker?coord='+parts[0]+','+parts[1]+'&referer=jiaoye';
+  } else {
+    url = 'https://apis.map.qq.com/uri/v1/locationpicker?referer=jiaoye';
+  }
+  // 弹出确认框，让用户选完地址后手动输入
+  showConfirm('📍 地图选点', '即将打开地图选点页面。\n\n操作步骤：\n1. 在地图中搜索或定位到目标地址\n2. 选好位置后点击确认\n3. 复制地址名称和坐标\n4. 回到此页面粘贴地址\n\n点击确认打开地图', function() {
+    window.open(url, '_blank');
+    // 弹出手动输入框
+    setTimeout(function() {
+      var inputAddr = prompt('请输入从地图上选中的地址：', addr);
+      if (inputAddr !== null && inputAddr.trim()) {
+        $(addrId).value = inputAddr.trim();
+      }
+      var inputCoord = prompt('请输入坐标（格式：纬度,经度，如 31.2304,121.4737）。\n如不知道坐标可直接确定跳过：', latLng);
+      if (inputCoord !== null && inputCoord.trim()) {
+        $(latLngId).value = inputCoord.trim();
+      }
+    }, 500);
+  });
+}
+
+function viewLocation(customerId) {
+  var c = DB.customers.find(function(x){return x.id===customerId;});
+  if (!c) return;
+  var url = buildMapUrl(c.latLng, c.ownerName, c.address);
+  window.open(url, '_blank');
+}
+
+function shareLocation(customerId) {
+  var c = DB.customers.find(function(x){return x.id===customerId;});
+  if (!c) return;
+  var url = buildMapUrl(c.latLng, c.ownerName, c.address);
+  var shareText = '📍 ' + c.ownerName + ' 的位置：' + (c.address||'') + '\n地图链接：' + url;
+  if (navigator.share) {
+    navigator.share({
+      title: c.ownerName + ' 的位置',
+      text: '📍 ' + (c.address||'已标记位置'),
+      url: url
+    }).catch(function(){});
+  } else {
+    // 复制到剪贴板
+    var textarea = document.createElement('textarea');
+    textarea.value = shareText;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      showToast('位置信息已复制，可粘贴到微信分享');
+    } catch(e) {
+      showToast('请手动复制链接：' + url);
+    }
+    document.body.removeChild(textarea);
+  }
 }
 
 function deleteCustomer(id) {
@@ -2170,7 +2339,7 @@ function importData(event) {
 }
 function confirmReset() {
   showConfirm('清空数据', '⚠️ 确定清空？不可恢复！建议先导出备份。', function() {
-    DB = {rooms:{},orders:[],foodBrands:[],foodRecords:[],prices:{},history:[],customers:[]};
+    DB = {rooms:{},orders:[],foodBrands:[],foodRecords:[],prices:{},history:[],customers:[],staff:[],villaNames:{}};
     initRooms(); initDefaultPrices(); saveDB(); renderSettings(); showToast('已清空');
   }, '⚠️');
 }
@@ -2411,6 +2580,268 @@ window.showInstallPrompt = function() {
     showToast('应用已安装，或浏览器不支持。请在浏览器菜单中选择「添加到桌面」');
   }
 };
+
+// ==================== 智能语音输入 ====================
+var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var voiceRecognition = null;
+var voiceTargetElement = null; // 当前聚焦的输入框
+var voiceFinalText = '';
+var voiceIsRecording = false;
+
+function toggleVoice() {
+  if (!SpeechRecognition) {
+    showToast('当前浏览器不支持语音输入，请使用 Chrome 或 Safari');
+    return;
+  }
+  if (voiceIsRecording) {
+    stopVoice();
+    return;
+  }
+  // 记录当前聚焦的元素
+  voiceTargetElement = document.activeElement;
+  var isInput = voiceTargetElement && (voiceTargetElement.tagName === 'INPUT' || voiceTargetElement.tagName === 'TEXTAREA' || voiceTargetElement.tagName === 'SELECT');
+  if (!isInput) {
+    voiceTargetElement = null; // 进入指令模式
+  }
+  startVoice();
+}
+
+function startVoice() {
+  voiceFinalText = '';
+  voiceIsRecording = true;
+  voiceRecognition = new SpeechRecognition();
+  voiceRecognition.lang = 'zh-CN';
+  voiceRecognition.continuous = false;
+  voiceRecognition.interimResults = true;
+
+  // 更新UI
+  $('voiceOverlay').classList.add('show');
+  $('voiceIconWrap').style.display = 'none';
+  $('voiceWave').style.display = 'flex';
+  $('voiceTitle').textContent = '正在聆听...';
+  $('voiceSubtitle').textContent = voiceTargetElement ? '识别结果将填入当前输入框' : '请说出指令，如：新建预订，主人张三，电话13800138000';
+  $('voiceResult').textContent = '等待语音输入...';
+  $('voiceResult').classList.add('placeholder');
+  document.querySelectorAll('.voice-btn').forEach(function(b){ b.classList.add('recording'); });
+
+  voiceRecognition.onresult = function(event) {
+    var interim = '';
+    var final = '';
+    for (var i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        final += event.results[i][0].transcript;
+      } else {
+        interim += event.results[i][0].transcript;
+      }
+    }
+    voiceFinalText = final || interim;
+    if (voiceFinalText) {
+      $('voiceResult').textContent = voiceFinalText;
+      $('voiceResult').classList.remove('placeholder');
+    }
+    if (final) {
+      // 有最终结果，自动确认
+      setTimeout(function() { confirmVoice(); }, 500);
+    }
+  };
+
+  voiceRecognition.onerror = function(event) {
+    $('voiceTitle').textContent = '识别出错';
+    $('voiceSubtitle').textContent = '请重试';
+    $('voiceResult').textContent = '错误：' + (event.error || '未知错误') + '。请检查麦克风权限。';
+    $('voiceResult').classList.remove('placeholder');
+    voiceIsRecording = false;
+    document.querySelectorAll('.voice-btn').forEach(function(b){ b.classList.remove('recording'); });
+    $('voiceIconWrap').style.display = 'flex';
+    $('voiceWave').style.display = 'none';
+  };
+
+  voiceRecognition.onend = function() {
+    if (voiceIsRecording && voiceFinalText) {
+      // 识别结束但有结果
+      voiceIsRecording = false;
+      document.querySelectorAll('.voice-btn').forEach(function(b){ b.classList.remove('recording'); });
+      $('voiceIconWrap').style.display = 'flex';
+      $('voiceWave').style.display = 'none';
+      $('voiceTitle').textContent = '识别完成';
+    } else if (voiceIsRecording) {
+      // 没有结果就结束了
+      voiceIsRecording = false;
+      document.querySelectorAll('.voice-btn').forEach(function(b){ b.classList.remove('recording'); });
+      $('voiceIconWrap').style.display = 'flex';
+      $('voiceWave').style.display = 'none';
+      if (!voiceFinalText) {
+        $('voiceTitle').textContent = '未识别到语音';
+        $('voiceSubtitle').textContent = '请点击取消或重新说话';
+        $('voiceResult').textContent = '没有听到语音，请重试。';
+        $('voiceResult').classList.remove('placeholder');
+      }
+    }
+  };
+
+  try {
+    voiceRecognition.start();
+  } catch(e) {
+    showToast('语音启动失败，请重试');
+    cancelVoice();
+  }
+}
+
+function stopVoice() {
+  if (voiceRecognition) {
+    try { voiceRecognition.stop(); } catch(e) {}
+  }
+  voiceIsRecording = false;
+  document.querySelectorAll('.voice-btn').forEach(function(b){ b.classList.remove('recording'); });
+}
+
+function cancelVoice() {
+  stopVoice();
+  $('voiceOverlay').classList.remove('show');
+  voiceFinalText = '';
+  voiceTargetElement = null;
+}
+
+function confirmVoice() {
+  stopVoice();
+  $('voiceOverlay').classList.remove('show');
+  if (!voiceFinalText) {
+    showToast('未识别到语音内容');
+    return;
+  }
+  if (voiceTargetElement) {
+    // 模式A：直接填充
+    fillInputElement(voiceTargetElement, voiceFinalText);
+    showToast('已填入：' + voiceFinalText.substring(0, 20));
+  } else {
+    // 模式B：智能指令
+    var msg = parseVoiceCommand(voiceFinalText);
+    showToast(msg);
+  }
+  voiceFinalText = '';
+  voiceTargetElement = null;
+}
+
+function fillInputElement(el, text) {
+  if (el.tagName === 'SELECT') {
+    // 智能匹配选项
+    var options = el.options;
+    var bestMatch = -1;
+    var bestScore = 0;
+    for (var i = 0; i < options.length; i++) {
+      var optText = options[i].text.toLowerCase();
+      var inputText = text.toLowerCase().trim();
+      if (optText === inputText) {
+        bestMatch = i; break;
+      }
+      if (optText.includes(inputText) || inputText.includes(optText)) {
+        if (optText.length > bestScore) { bestMatch = i; bestScore = optText.length; }
+      }
+    }
+    if (bestMatch >= 0) { el.selectedIndex = bestMatch; if (el.onchange) el.onchange(); }
+    else { showToast('未匹配到选项：' + text); }
+  } else {
+    el.value = text;
+    if (el.oninput) el.oninput();
+  }
+}
+
+function parseVoiceCommand(text) {
+  text = text.replace(/[，。、\s]+/g, ' ').trim();
+  var executed = [];
+
+  // 页面切换
+  if (/切换.*看板|打开.*看板|去看板/.test(text)) { switchPage('dashboard'); executed.push('切换到数据看板'); }
+  else if (/切换.*订房|打开.*订房|去订房|新建预订|新的预订/.test(text)) { switchPage('booking'); executed.push('切换到订房系统'); }
+  else if (/切换.*狗粮|打开.*狗粮|去狗粮/.test(text)) { switchPage('food'); executed.push('切换到狗粮管理'); }
+  else if (/切换.*客户|打开.*客户|去客户|添加客户|新建客户|新客户/.test(text)) { switchPage('customer'); executed.push('切换到客户档案'); }
+  else if (/切换.*设置|打开.*设置|去设置/.test(text)) { switchPage('settings'); executed.push('切换到设置'); }
+
+  // 新建预订
+  if (/新建预订|新预订|新建订单|预订房间|订房/.test(text)) {
+    var bookingModal = $('modalBooking');
+    if (!bookingModal.classList.contains('show')) {
+      // 找一个空闲房间打开预订
+      var firstFree = null;
+      for (var rid in DB.rooms) { if (DB.rooms[rid].status === 'free') { firstFree = rid; break; } }
+      if (firstFree) { openNewBooking(firstFree); executed.push('已打开新建预订'); }
+      else { showToast('没有空闲房间'); }
+    }
+  }
+
+  // 添加客户
+  if (/添加客户|新建客户|新客户|录入客户/.test(text)) {
+    if (!$('modalCustomer').classList.contains('show')) {
+      editCustomer();
+      executed.push('已打开添加客户');
+    }
+  }
+
+  // 退房
+  if (/退房|结算/.test(text)) {
+    var roomMatch = text.match(/[A-Z]+\d+/);
+    if (roomMatch) {
+      var room = DB.rooms[roomMatch[0]];
+      if (room && room.orderId) { openCheckout(room.orderId); executed.push('已打开退房结算'); }
+      else { showToast('房间 ' + roomMatch[0] + ' 无在住订单'); }
+    }
+  }
+
+  // 保存
+  if (/^保存$|确认保存|点击保存/.test(text)) {
+    var saveBtn = document.querySelector('.modal-overlay.show .btn-primary:not([style*="display: none"])');
+    if (saveBtn) { saveBtn.click(); executed.push('已保存'); }
+  }
+
+  // 关闭
+  if (/^关闭$|取消$|关闭弹窗|关闭窗口/.test(text)) {
+    document.querySelectorAll('.modal-overlay.show').forEach(function(m){ m.classList.remove('show'); });
+    executed.push('已关闭');
+  }
+
+  // 填充表单字段
+  var fieldMap = [
+    { pattern: /主人[是为]?\s*([^\s,，。]+)/, id: 'bkOwner', label: '主人姓名' },
+    { pattern: /电话[是为]?\s*([\d\s]+)/, id: 'bkPhone', label: '电话' },
+    { pattern: /身份证[号为]?\s*([\dXx\s]+)/, id: 'bkIdCard', label: '身份证' },
+    { pattern: /狗名[是为]?\s*([^\s,，。]+)/, id: 'bkDogName', label: '狗名' },
+    { pattern: /品种[是为]?\s*([^\s,，。]+)/, id: 'bkBreed', label: '品种' },
+    { pattern: /体重[是为]?\s*([\d.]+)/, id: 'bkWeight', label: '体重' },
+    { pattern: /入住日期?[是为]?\s*(\d{4}[-/年]\d{1,2}[-/月]\d{1,2})/, id: 'bkCheckIn', label: '入住日期' },
+    { pattern: /退房日期?[是为]?\s*(\d{4}[-/年]\d{1,2}[-/月]\d{1,2})/, id: 'bkCheckOut', label: '退房日期' },
+    { pattern: /备注[是为]?\s*(.+)/, id: 'bkNotes', label: '备注' },
+    // 客户表单
+    { pattern: /客户姓名[是为]?\s*([^\s,，。]+)/, id: 'custName', label: '客户姓名' },
+    { pattern: /客户电话[是为]?\s*([\d\s]+)/, id: 'custPhone', label: '客户电话' },
+  ];
+
+  fieldMap.forEach(function(f) {
+    var m = text.match(f.pattern);
+    if (m && m[1]) {
+      var el = $(f.id);
+      if (el) {
+        var val = m[1].trim().replace(/[年月]/g, '-').replace(/[号日]/g, '');
+        el.value = val;
+        if (el.oninput) el.oninput();
+        executed.push(f.label + '：' + val);
+      }
+    }
+  });
+
+  // 性别
+  if (/性别.*公|公的/.test(text)) {
+    var genderEl = $('bkGender') || $('custGender');
+    if (genderEl) { genderEl.value = '公'; executed.push('性别：公'); }
+  } else if (/性别.*母|母的/.test(text)) {
+    var genderEl2 = $('bkGender') || $('custGender');
+    if (genderEl2) { genderEl2.value = '母'; executed.push('性别：母'); }
+  }
+
+  if (executed.length === 0) {
+    return '未识别到有效指令：' + text;
+  }
+  return '已执行：' + executed.join('，');
+}
 
 // Service Worker
 if ('serviceWorker' in navigator) {
