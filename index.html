@@ -456,6 +456,13 @@ if (APP_MODE === 'view') {
   <div class="stats-grid" id="groomStats"></div>
   <div class="card">
     <div class="card-title">
+      <span class="left">💇 员工列表</span>
+      <button class="btn btn-primary btn-sm" onclick="addStaffQuick()">➕ 添加员工</button>
+    </div>
+    <div id="staffListGroom"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">
       <span class="left">💇 洗美记录</span>
       <button class="btn btn-primary btn-sm" onclick="openGroomRecord()">➕ 添加记录</button>
     </div>
@@ -2674,6 +2681,19 @@ window.showInstallPrompt = function() {
 // ==================== 员工洗美记录 ====================
 function renderGroomingPage() {
   if (!DB.groomRecords) DB.groomRecords = [];
+  // 渲染员工列表
+  var staffHtml = '';
+  if (!DB.staff || DB.staff.length === 0) {
+    staffHtml = '<div style="color:var(--gray);text-align:center;padding:16px">暂无员工，点击右上角添加</div>';
+  } else {
+    DB.staff.forEach(function(s) {
+      var myCount = DB.groomRecords.filter(function(r){return r.staffName===s.name;}).length;
+      var myIncome = DB.groomRecords.filter(function(r){return r.staffName===s.name;}).reduce(function(sum,r){return sum+(r.amount||0);},0);
+      staffHtml += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-light)"><span style="font-size:20px">💇</span><div style="flex:1"><strong>'+s.name+'</strong><span style="font-size:12px;color:var(--gray);margin-left:8px">'+myCount+'次 · ¥'+myIncome+'</span></div></div>';
+    });
+  }
+  if ($('staffListGroom')) $('staffListGroom').innerHTML = staffHtml;
+
   var nowMonth = new Date().toISOString().slice(0,7);
   var monthRecords = DB.groomRecords.filter(function(r){return (r.date||'').slice(0,7) === nowMonth;});
   var bathCount = monthRecords.filter(function(r){return r.type==='bath';}).length;
@@ -2740,6 +2760,15 @@ function saveGroomRecord() {
 }
 function deleteGroomRecord(id) {
   showConfirm('删除记录','确定删除此洗美记录？',function(){DB.groomRecords=DB.groomRecords.filter(function(r){return r.id!==id;});saveDB();renderGroomingPage();showToast('已删除');});
+}
+function addStaffQuick() {
+  var name = prompt('请输入员工姓名：');
+  if (!name || !name.trim()) return;
+  name = name.trim();
+  if (!DB.staff) DB.staff = [];
+  if (DB.staff.find(function(s){return s.name===name;})) { showToast('该员工已存在'); return; }
+  DB.staff.push({id:genId(),name:name,active:true,createdAt:now()});
+  saveDB(); renderGroomingPage(); showToast('员工已添加：'+name);
 }
 
 // ==================== 智能语音输入 ====================
