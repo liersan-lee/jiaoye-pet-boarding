@@ -237,6 +237,16 @@ body.mode-staff .view-badge { display: inline-block; background: var(--success);
 /* 员工模式徽章 */
 .staff-badge { display: none; background: var(--success); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 20px; margin-left: 8px; }
 body.mode-staff .staff-badge { display: inline-block; }
+/* 员工模式：隐藏所有删除按钮和危险操作 */
+body.mode-staff .btn-danger { display: none !important; }
+body.mode-staff .delete-only { display: none !important; }
+
+/* ===== 员工洗美记录 ===== */
+.groom-record-card{background:var(--white);border-radius:8px;padding:12px 16px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between}
+.groom-record-card .info{flex:1}
+.groom-record-card .info .title{font-weight:600;font-size:14px}
+.groom-record-card .info .detail{font-size:12px;color:var(--gray);margin-top:4px}
+.groom-record-card .amount{font-weight:700;color:var(--success);font-size:16px}
 
 /* ===== 语音输入按钮 ===== */
 .voice-btn{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;flex-shrink:0}
@@ -336,6 +346,7 @@ if (APP_MODE === 'view') {
     <div class="nav-item" onclick="switchPage('booking')">🏠 订房系统</div>
     <div class="nav-item" onclick="switchPage('food')">🦴 狗粮管理</div>
     <div class="nav-item" onclick="switchPage('customer')">🐕 客户档案</div>
+    <div class="nav-item" onclick="switchPage('grooming')">💇 洗美记录</div>
     <div class="nav-item edit-only nav-item-settings" onclick="switchPage('settings')">⚙️ 设置</div>
     <div class="nav-item edit-only" onclick="showInstallPrompt()" title="安装到桌面" style="background:rgba(255,255,255,0.12)">📲 安装APP</div>
   </div>
@@ -351,6 +362,7 @@ if (APP_MODE === 'view') {
   <div class="bn-voice"><button class="voice-btn" onclick="toggleVoice()" title="语音输入">🎤</button></div>
   <div class="bn-item" onclick="switchPage('food')"><span class="icon">🦴</span>狗粮</div>
   <div class="bn-item" onclick="switchPage('customer')"><span class="icon">🐕</span>客户</div>
+  <div class="bn-item" onclick="switchPage('grooming')"><span class="icon">💇</span>洗美</div>
   <div class="bn-item bn-item-settings edit-only" onclick="switchPage('settings')"><span class="icon">⚙️</span>设置</div>
 </div>
 
@@ -436,6 +448,27 @@ if (APP_MODE === 'view') {
       <select id="custFilterArea" onchange="renderCustomers()"><option value="">全部区域</option><option value="big">大狗区客户</option><option value="small">小狗区客户</option></select>
     </div>
     <div id="customerList"></div>
+  </div>
+</div>
+
+<!-- ====== 洗美记录 ====== -->
+<div class="page" id="page-grooming">
+  <div class="stats-grid" id="groomStats"></div>
+  <div class="card">
+    <div class="card-title">
+      <span class="left">💇 洗美记录</span>
+      <button class="btn btn-primary btn-sm" onclick="openGroomRecord()">➕ 添加记录</button>
+    </div>
+    <div class="filter-bar">
+      <select id="groomFilterType" onchange="renderGroomingPage()" style="padding:8px;border:1px solid var(--gray-light);border-radius:6px">
+        <option value="">全部类型</option>
+        <option value="bath">🛁 洗澡</option>
+        <option value="grooming">✂️ 美容</option>
+      </select>
+      <select id="groomFilterStaff" onchange="renderGroomingPage()" style="padding:8px;border:1px solid var(--gray-light);border-radius:6px"></select>
+      <input type="month" id="groomFilterMonth" onchange="renderGroomingPage()" style="padding:8px;border:1px solid var(--gray-light);border-radius:6px">
+    </div>
+    <div id="groomRecordList" style="margin-top:16px"></div>
   </div>
 </div>
 
@@ -562,7 +595,7 @@ function generateRooms(prefix, start, end, exclude) {
 }
 
 // ==================== 数据管理 ====================
-let DB = { rooms: {}, orders: [], foodBrands: [], foodRecords: [], prices: {}, history: [], customers: [], staff: [], villaNames: {} };
+let DB = { rooms: {}, orders: [], foodBrands: [], foodRecords: [], prices: {}, history: [], customers: [], staff: [], villaNames: {}, groomRecords: [] };
 const STORAGE_KEY = 'petBoardingDB_v3';
 
 // JSONBin.io 云端同步配置
@@ -577,7 +610,7 @@ function loadDB() {
   if (saved) { try { DB = JSON.parse(saved); } catch(e) { console.error('load fail', e); } }
   DB.rooms = DB.rooms || {}; DB.orders = DB.orders || []; DB.foodBrands = DB.foodBrands || [];
   DB.foodRecords = DB.foodRecords || []; DB.prices = DB.prices || {}; DB.history = DB.history || [];
-  DB.customers = DB.customers || []; DB.staff = DB.staff || []; DB.villaNames = DB.villaNames || {};
+  DB.customers = DB.customers || []; DB.staff = DB.staff || []; DB.villaNames = DB.villaNames || {}; DB.groomRecords = DB.groomRecords || [];
   initRooms(); initDefaultPrices(); saveDB();
 }
 function saveDB() {
@@ -724,8 +757,8 @@ function switchPage(name) {
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
   $('page-' + name).classList.add('active');
-  var navMap = { dashboard:0, booking:1, food:2, customer:3, settings:4 };
-  var navs = document.querySelectorAll('.nav-item');
+  var navMap = { dashboard:0, booking:1, food:2, customer:3, grooming:4, settings:5 };
+  var navs = document.querySelectorAll('.topbar .nav-item');
   if (navs[navMap[name]]) navs[navMap[name]].classList.add('active');
   var bnItems = document.querySelectorAll('.bn-item');
   if (bnItems[navMap[name]]) bnItems[navMap[name]].classList.add('active');
@@ -733,6 +766,7 @@ function switchPage(name) {
   if (name === 'booking') { renderRoomTabs(); renderRoomBoard(); renderOrders(); }
   if (name === 'food') renderFoodPage();
   if (name === 'customer') renderCustomers();
+  if (name === 'grooming') renderGroomingPage();
   if (name === 'settings') renderSettings();
 }
 
@@ -2644,6 +2678,77 @@ window.showInstallPrompt = function() {
   }
 };
 
+// ==================== 员工洗美记录 ====================
+function renderGroomingPage() {
+  if (!DB.groomRecords) DB.groomRecords = [];
+  var nowMonth = new Date().toISOString().slice(0,7);
+  var monthRecords = DB.groomRecords.filter(function(r){return (r.date||'').slice(0,7) === nowMonth;});
+  var bathCount = monthRecords.filter(function(r){return r.type==='bath';}).length;
+  var groomCount = monthRecords.filter(function(r){return r.type==='grooming';}).length;
+  var totalIncome = monthRecords.reduce(function(s,r){return s+(r.amount||0);},0);
+  var staffCounts = {};
+  monthRecords.forEach(function(r){ if(r.staffName) staffCounts[r.staffName]=(staffCounts[r.staffName]||0)+1; });
+  var topStaff = Object.keys(staffCounts).sort(function(a,b){return staffCounts[b]-staffCounts[a];})[0] || '-';
+  $('groomStats').innerHTML = ''
+    + '<div class="stat-card"><div class="icon-box" style="background:#E3F2FD;color:var(--primary)">🛁</div><div class="info"><div class="label">本月洗澡</div><div class="value">'+bathCount+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#F3E5F5;color:#9C27B0">✂️</div><div class="info"><div class="label">本月美容</div><div class="value">'+groomCount+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#E8F8E8;color:var(--success)">💰</div><div class="info"><div class="label">本月收入</div><div class="value">¥'+totalIncome+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFF8E1;color:var(--warning)">🏆</div><div class="info"><div class="label">本月最多</div><div class="value" style="font-size:18px">'+topStaff+'</div></div></div>';
+  var fType = $('groomFilterType')?$('groomFilterType').value:'';
+  var fStaff = $('groomFilterStaff')?$('groomFilterStaff').value:'';
+  var fMonth = $('groomFilterMonth')?$('groomFilterMonth').value:'';
+  var staffOpts = '<option value="">全部员工</option>';
+  var staffNames = [];
+  (DB.staff||[]).forEach(function(s){ if(s.active!==false && staffNames.indexOf(s.name)<0) staffNames.push(s.name); });
+  DB.groomRecords.forEach(function(r){ if(r.staffName && staffNames.indexOf(r.staffName)<0) staffNames.push(r.staffName); });
+  staffNames.forEach(function(n){ staffOpts += '<option value="'+n+'"'+(fStaff===n?' selected':'')+'>'+n+'</option>'; });
+  if ($('groomFilterStaff')) $('groomFilterStaff').innerHTML = staffOpts;
+  var records = DB.groomRecords.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+  if (fType) records = records.filter(function(r){return r.type === fType;});
+  if (fStaff) records = records.filter(function(r){return r.staffName === fStaff;});
+  if (fMonth) records = records.filter(function(r){return (r.date||'').slice(0,7) === fMonth;});
+  if (records.length === 0) { $('groomRecordList').innerHTML = '<div class="empty-state"><div class="icon">💇</div><div class="text">暂无洗美记录，点击「添加记录」录入</div></div>'; return; }
+  var html = '';
+  records.forEach(function(r) {
+    var typeIcon = r.type==='bath'?'🛁 洗澡':'✂️ 美容';
+    var dogInfo = r.dogName?r.dogName+(r.breed?' · '+r.breed:''):'';
+    var ownerInfo = r.ownerName?' · '+r.ownerName:'';
+    html += '<div class="groom-record-card"><div class="info"><div class="title">'+typeIcon+' · '+r.staffName+'</div><div class="detail">'+formatDate(r.date)+' · '+dogInfo+ownerInfo+(r.notes?' · '+r.notes:'')+'</div></div><div style="display:flex;align-items:center;gap:8px"><div class="amount">¥'+(r.amount||0)+'</div><button class="btn btn-danger btn-sm delete-only" onclick="deleteGroomRecord(\''+r.id+'\')">删除</button></div></div>';
+  });
+  $('groomRecordList').innerHTML = html;
+}
+function openGroomRecord() {
+  if (!DB.groomRecords) DB.groomRecords = [];
+  var staffOpts = '<option value="">请选择员工</option>';
+  (DB.staff||[]).forEach(function(s){ if(s.active!==false) staffOpts += '<option value="'+s.name+'">'+s.name+'</option>'; });
+  staffOpts += '<option value="__other__">其他（手动输入）</option>';
+  $('modalRoomTitle').textContent = '➕ 添加洗美记录';
+  $('modalRoomBody').innerHTML = ''
+    + '<div class="form-row"><div class="form-group"><label>类型 <span class="required">*</span></label><select id="grType"><option value="bath">🛁 洗澡</option><option value="grooming">✂️ 美容</option></select></div>'
+    + '<div class="form-group"><label>金额 <span class="required">*</span></label><input type="number" id="grAmount" placeholder="如：80" value="80"></div></div>'
+    + '<div class="form-group"><label>美容师/员工 <span class="required">*</span></label><select id="grStaff" onchange="if(this.value===\'__other__\'){var n=prompt(\'请输入员工名字：\');if(n){var o=document.createElement(\'option\');o.value=n;o.text=n;o.selected=true;this.insertBefore(o,this.lastChild);this.value=n;}}">'+staffOpts+'</select></div>'
+    + '<div class="form-row"><div class="form-group"><label>狗名</label><input type="text" id="grDogName" placeholder="狗名（选填）"></div>'
+    + '<div class="form-group"><label>品种</label><input type="text" id="grBreed" placeholder="品种（选填）"></div></div>'
+    + '<div class="form-group"><label>主人姓名</label><input type="text" id="grOwner" placeholder="主人姓名（选填）"></div>'
+    + '<div class="form-group"><label>日期</label><input type="date" id="grDate" value="'+today()+'"></div>'
+    + '<div class="form-group"><label>备注</label><input type="text" id="grNotes" placeholder="备注（选填）"></div>';
+  $('modalRoomFooter').innerHTML = '<button class="btn btn-outline" onclick="closeModal(\'modalRoom\')">取消</button><button class="btn btn-primary" onclick="saveGroomRecord()">保存</button>';
+  $('modalRoom').classList.add('show');
+}
+function saveGroomRecord() {
+  var type=$('grType').value, amount=parseFloat($('grAmount').value)||0, staffName=$('grStaff').value;
+  var dogName=$('grDogName').value.trim(), breed=$('grBreed').value.trim(), ownerName=$('grOwner').value.trim();
+  var date=$('grDate').value||today(), notes=$('grNotes').value.trim();
+  if(!staffName||staffName==='__other__'){showToast('请选择员工');return;}
+  if(amount<=0){showToast('请填金额');return;}
+  if(!DB.groomRecords) DB.groomRecords=[];
+  DB.groomRecords.push({id:genId(),type:type,amount:amount,staffName:staffName,dogName:dogName,breed:breed,ownerName:ownerName,date:date,notes:notes,createdAt:now()});
+  saveDB(); closeModal('modalRoom'); renderGroomingPage(); showToast('洗美记录已保存');
+}
+function deleteGroomRecord(id) {
+  showConfirm('删除记录','确定删除此洗美记录？',function(){DB.groomRecords=DB.groomRecords.filter(function(r){return r.id!==id;});saveDB();renderGroomingPage();showToast('已删除');});
+}
+
 // ==================== 智能语音输入 ====================
 var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 var voiceRecognition = null;
@@ -2905,6 +3010,23 @@ function parseVoiceCommand(text) {
   }
   return '已执行：' + executed.join('，');
 }
+
+// ==================== 全屏 APP 模式 ====================
+function enterFullscreen() {
+  var el = document.documentElement;
+  if (el.requestFullscreen) { el.requestFullscreen().catch(function(){}); }
+  else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
+  else if (el.msRequestFullscreen) { el.msRequestFullscreen(); }
+}
+// 添加到桌面后 standalone 模式自动隐藏浏览器UI
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+  // 已是APP模式，不需要额外操作
+  document.body.classList.add('app-standalone');
+}
+// 点击页面任意位置时尝试滚动隐藏浏览器地址栏（移动端）
+window.addEventListener('load', function() {
+  setTimeout(function() { window.scrollTo(0, 1); }, 100);
+});
 
 // Service Worker
 if ('serviceWorker' in navigator) {
