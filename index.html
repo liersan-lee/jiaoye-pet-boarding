@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="郊野宠物寄养工作台">
+<meta name="theme-color" content="#357ABD">
+<link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuWuoOeJqeWvjOWFt+euoeeQhuW3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5a6g54mp5a+M5YW3IiwKICAic3RhcnRfdXJsIjogIi4v5a6g54mp5a+M5YW35bel5L2c5Y+wLmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMzNTdBQkQiLAogICJ0aGVtZV9jb2xvciI6ICIjMzU3QUJEIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBuYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNuSUhCeVpYTnpjMjlrYVc1bk9uUnlkV1Y5CiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBuYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNuSUhCeVpYTnpjMjlrYVc1bk9uUnlkV1Y5CiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23357ABD'/><text x='50' y='65' font-size='55' text-anchor='middle'>🐾</text></svg>">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<title>郊野宠物寄养工作台</title>
+<style>
+:root{--primary:#4A90D9;--primary-dark:#357ABD;--primary-light:#6FB0E3;--success:#27AE60;--warning:#F39C12;--danger:#E74C3C;--gray:#95A5A6;--gray-light:#ECF0F1;--gray-lighter:#F8F9FA;--dark:#2C3E50;--bg:#F0F2F5;--white:#FFF;--shadow:0 2px 8px rgba(0,0,0,0.08);--radius:10px;--radius-sm:6px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--dark);font-size:14px}
+.topbar{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.15);position:sticky;top:0;z-index:100}
+.topbar .logo{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.topbar .logo .icon{font-size:28px}
+.topbar .nav{display:flex;gap:4px}
+.topbar .nav-item{padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;font-size:14px;font-weight:500;white-space:nowrap}
+.topbar .nav-item:hover{background:rgba(255,255,255,.15)}
+.topbar .nav-item.active{background:rgba(255,255,255,.25)}
+.topbar .date{font-size:13px;opacity:.85}
+.main{padding:20px 24px;max-width:1400px;margin:0 auto}
+.page{display:none}
+.page.active{display:block}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.card-title .left{display:flex;align-items:center;gap:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
+.stat-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;display:flex;align-items:center;gap:16px;transition:transform .2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card .icon-box{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.stat-card .info .label{font-size:13px;color:var(--gray);margin-bottom:4px}
+.stat-card .info .value{font-size:26px;font-weight:700}
+.stat-card .info .sub{font-size:12px;color:var(--gray)}
+.occupancy-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.occ-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;text-align:center}
+.occ-card .ring{width:100px;height:100px;margin:0 auto 8px;position:relative}
+.occ-card .ring svg{transform:rotate(-90deg)}
+.occ-card .ring .pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700}
+.occ-card .title{font-size:14px;color:var(--gray);margin-bottom:4px}
+.occ-card .detail{font-size:12px;color:var(--gray)}
+.room-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.room-tab{padding:8px 20px;border-radius:20px;cursor:pointer;font-weight:600;transition:all .2s;border:2px solid var(--primary);font-size:14px}
+.room-tab.active{background:var(--primary);color:white}
+.room-tab:not(.active){background:white;color:var(--primary)}
+.room-stats{display:flex;gap:20px;margin-bottom:16px;font-size:13px;flex-wrap:wrap}
+.room-stats .item{display:flex;align-items:center;gap:6px}
+.room-stats .dot{width:12px;height:12px;border-radius:3px}
+.dot-free{background:var(--success)}.dot-booked{background:var(--warning)}.dot-occupied{background:var(--danger)}.dot-maintenance{background:var(--gray)}
+.room-section{margin-bottom:24px}
+.room-section-title{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--gray-light);display:flex;align-items:center;gap:8px}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.room-card{border-radius:var(--radius-sm);padding:10px;cursor:pointer;transition:all .2s;border:2px solid transparent;position:relative}
+.room-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.room-card.free{background:#E8F8E8;border-color:#C8E6C8}
+.room-card.booked{background:#FFF8E1;border-color:#FFE0B2}
+.room-card.occupied{background:#FFEBEE;border-color:#FFCDD2}
+.room-card.maintenance{background:#ECEFF1;border-color:#CFD8DC}
+.room-card .room-no{font-size:15px;font-weight:700}
+.room-card .room-type{font-size:11px;color:var(--gray);margin-top:2px}
+.room-card .room-status{font-size:11px;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:6px;font-weight:600}
+.room-card.free .room-status{background:var(--success);color:white}
+.room-card.booked .room-status{background:var(--warning);color:white}
+.room-card.occupied .room-status{background:var(--danger);color:white}
+.room-card.maintenance .room-status{background:var(--gray);color:white}
+.room-card .guest-info{font-size:11px;margin-top:6px;line-height:1.4}
+.room-card .guest-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:flex-start;padding:40px 20px;overflow-y:auto}
+.modal-overlay.show{display:flex}
+.modal{background:white;border-radius:var(--radius);width:100%;max-width:600px;box-shadow:0 8px 32px rgba(0,0,0,.2);overflow:hidden}
+.modal.large{max-width:800px}
+.modal-header{padding:16px 24px;background:var(--primary);color:white;display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-size:18px}
+.modal-header .close{cursor:pointer;font-size:24px;line-height:1}
+.modal-body{padding:24px;max-height:70vh;overflow-y:auto}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--gray-light);display:flex;justify-content:flex-end;gap:12px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-weight:600;margin-bottom:6px;font-size:14px}
+.form-group label .required{color:var(--danger)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1px solid #DDD;border-radius:var(--radius-sm);font-size:14px;font-family:inherit;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.btn{padding:10px 24px;border:none;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-dark)}
+.btn-success{background:var(--success);color:white}.btn-success:hover{background:#219948}
+.btn-danger{background:var(--danger);color:white}.btn-danger:hover{background:#C0392B}
+.btn-warning{background:var(--warning);color:white}.btn-warning:hover{background:#D68910}
+.btn-gray{background:var(--gray);color:white}
+.btn-outline{background:white;border:1px solid #DDD;color:var(--dark)}.btn-outline:hover{background:var(--gray-lighter)}
+.btn-sm{padding:6px 14px;font-size:13px}
+table{width:100%;border-collapse:collapse}
+table th,table td{padding:10px 12px;text-align:left}
+table th{background:var(--gray-lighter);font-weight:700;font-size:13px;border-bottom:2px solid var(--gray-light);white-space:nowrap}
+table td{border-bottom:1px solid var(--gray-light);font-size:14px}
+table tr:hover td{background:var(--gray-lighter)}
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:600}
+.badge-success{background:#E8F8E8;color:var(--success)}.badge-warning{background:#FFF8E1;color:var(--warning)}.badge-danger{background:#FFEBEE;color:var(--danger)}.badge-gray{background:var(--gray-light);color:var(--gray)}.badge-info{background:#E3F2FD;color:var(--primary)}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.food-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border:1px solid var(--gray-light);transition:all .2s}
+.food-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.food-card .brand-name{font-size:16px;font-weight:700;margin-bottom:4px}
+.food-card .brand-spec{font-size:13px;color:var(--gray);margin-bottom:12px}
+.food-card .stock-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.food-card .stock-info .stock-val{font-size:20px;font-weight:700}
+.food-card .stock-info .stock-label{font-size:12px;color:var(--gray)}
+.food-card .price-info{display:flex;justify-content:space-between;font-size:13px;margin-bottom:12px}
+.food-card .price-info .cost{color:var(--gray)}.food-card .price-info .sale{color:var(--danger);font-weight:600}
+.food-card .actions{display:flex;gap:8px}
+.food-card.low-stock{border-color:var(--danger)}
+.food-card.low-stock::after{content:'⚠ 库存不足';display:block;color:var(--danger);font-size:12px;margin-top:8px;font-weight:600}
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.empty-state .text{font-size:15px}
+.chart-container{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-around;height:180px;gap:8px;padding-top:20px}
+.chart-bar{flex:1;background:var(--primary-light);border-radius:4px 4px 0 0;position:relative;min-height:4px;transition:all .3s;cursor:pointer}
+.chart-bar:hover{background:var(--primary)}
+.chart-bar .val{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:600;color:var(--dark)}
+.chart-bar .label{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--gray);white-space:nowrap}
+.filter-bar{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{padding:8px 12px;border:1px solid #DDD;border-radius:var(--radius-sm);font-size:14px}
+.alert{padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:12px;font-size:14px;display:flex;align-items:center;gap:8px}
+.alert-info{background:#E3F2FD;color:var(--primary-dark)}.alert-warning{background:#FFF8E1;color:#E65100}.alert-danger{background:#FFEBEE;color:#B71C1C}.alert-success{background:#E8F8E8;color:#1B5E20}
+.toast{position:fixed;top:80px;right:24px;background:var(--dark);color:white;padding:12px 24px;border-radius:var(--radius-sm);box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:2000;display:none;font-size:14px}
+.toast.show{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.cust-suggest{position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #DDD;border-radius:0 0 var(--radius-sm) var(--radius-sm);max-height:200px;overflow-y:auto;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.1);display:none}
+.cust-suggest.show{display:block}
+.cust-suggest .item{padding:10px 12px;cursor:pointer;font-size:14px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.cust-suggest .item:hover,.cust-suggest .item.active{background:var(--primary);color:white}
+.cust-suggest .item .dogs{font-size:12px;opacity:0.7}
+.cust-suggest .item .phone{font-size:12px;opacity:0.7}
+.confirm-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1500;justify-content:center;align-items:center}
+.confirm-overlay.show{display:flex}
+.confirm-box{background:white;border-radius:var(--radius);padding:24px;width:100%;max-width:400px;text-align:center}
+.confirm-box .icon{font-size:48px;margin-bottom:12px}
+.confirm-box .title{font-size:18px;font-weight:700;margin-bottom:8px}
+.confirm-box .msg{font-size:14px;color:var(--gray);margin-bottom:20px}
+.confirm-box .actions{display:flex;gap:12px;justify-content:center}
+.birthday-card{background:linear-gradient(135deg,#FF6B6B,#FF8E53);color:white;border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.birthday-card .dog-avatar{font-size:36px}
+.birthday-card .info .name{font-size:16px;font-weight:700}
+.birthday-card .info .detail{font-size:13px;opacity:.9}
+.customer-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px;display:flex;gap:16px;align-items:center}
+.customer-card .avatar{font-size:36px;width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:var(--gray-light);border-radius:50%}
+.customer-card .info{flex:1}
+.customer-card .info .name{font-size:16px;font-weight:700}
+.customer-card .info .detail{font-size:13px;color:var(--gray);margin-top:4px}
+.customer-card .actions{display:flex;gap:8px}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #E0E0E0;z-index:99;padding:6px 4px env(safe-area-inset-bottom);box-shadow:0 -2px 8px rgba(0,0,0,0.06)}
+.bottom-nav .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;cursor:pointer;flex:1;text-align:center;font-size:11px;color:var(--gray);transition:all .2s;border-radius:8px}
+.bottom-nav .bn-item.active{color:var(--primary);font-weight:700}
+.bottom-nav .bn-item .icon{font-size:22px}
+@media(max-width:768px){
+  .topbar{display:none}
+  .bottom-nav{display:flex}
+  .main{padding:12px 12px 80px 12px}
+  .occupancy-row{grid-template-columns:1fr 1fr;gap:8px}
+  .occ-card{padding:12px}
+  .occ-card .ring{width:80px;height:80px}
+  .occ-card .ring .pct{font-size:18px}
+  .occ-card .title{font-size:12px}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .stat-card{padding:12px;gap:10px}
+  .stat-card .icon-box{width:36px;height:36px;font-size:18px;border-radius:8px}
+  .stat-card .info .value{font-size:20px}
+  .stat-card .info .label{font-size:11px}
+  .stat-card .info .sub{font-size:10px}
+  .form-row,.form-row-3{grid-template-columns:1fr;gap:8px}
+  .room-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
+  .room-card{padding:8px}
+  .room-card .room-no{font-size:13px}
+  .room-card .room-type{font-size:10px}
+  .room-card .room-status{font-size:10px}
+  .room-card .guest-info{font-size:10px}
+  .room-tabs{gap:4px}
+  .room-tab{padding:6px 12px;font-size:12px}
+  .room-stats{gap:8px;font-size:11px}
+  .btn{padding:8px 16px;font-size:13px}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  .modal-overlay{padding:10px 0 0 0;align-items:flex-end}
+  .modal{border-radius:16px 16px 0 0;max-width:100%;max-height:85vh}
+  .modal-header{padding:12px 16px}
+  .modal-header h3{font-size:16px}
+  .modal-body{padding:16px;max-height:60vh}
+  .modal-footer{padding:12px 16px}
+  .card{padding:12px;margin-bottom:10px;border-radius:8px}
+  .card-title{font-size:15px;margin-bottom:10px}
+  table th,table td{padding:6px 8px;font-size:12px}
+  .filter-bar{gap:8px}
+  .filter-bar select,.filter-bar input{padding:6px 8px;font-size:13px;width:100%!important}
+  .food-grid{grid-template-columns:1fr;gap:10px}
+  .customer-card{flex-direction:column;align-items:flex-start;gap:8px}
+  .customer-card .avatar{width:40px;height:40px;font-size:28px}
+  .customer-card .info .name{font-size:14px}
+  .customer-card .actions{align-self:flex-end}
+  .chart-bars{height:120px}
+  .chart-bar .val{font-size:10px}
+  .chart-bar .label{font-size:9px}
+  input,select,textarea{font-size:16px!important;padding:12px!important}
+  .form-group label{font-size:14px}
+}
+
+/* ===== 查看模式：隐藏所有编辑元素 ===== */
+body.mode-view .edit-only { display: none !important; }
+body.mode-view .view-hide { display: none !important; }
+body.mode-view .modal-overlay .btn-primary { display: none !important; }
+body.mode-view .modal-overlay .btn-edit { display: none !important; }
+body.mode-view #modalBooking .btn-primary { display: none !important; }
+body.mode-view .action-btns { display: none !important; }
+/* 查看模式下保留关闭按钮 */
+body.mode-view .modal-overlay .btn-secondary { display: inline-block !important; }
+body.mode-view .modal-overlay .modal-close { display: inline-block !important; }
+/* 查看模式下禁止输入 */
+body.mode-view input:not([type=search]):not([readonly]), 
+body.mode-view textarea, 
+body.mode-view select { pointer-events: none; background: var(--gray-lighter); }
+body.mode-view input[type=search] { pointer-events: auto; background: var(--white); }
+/* 查看模式：顶栏提示 */
+.view-badge { display: none; background: var(--warning); color: #fff; font-size: 12px; padding: 2px 10px; border-radius: 20px; margin-left: 8px; }
+body.mode-view .view-badge { display: inline-block; }
+/* 查看模式：底部导航栏隐藏设置 */
+body.mode-view .bn-item-settings { display: none !important; }
+</style>
+</head>
+<body>
+<script>
+// 检测模式：?mode=view → 查看模式，否则编辑模式
+var APP_MODE = (function() {
+  var p = new URLSearchParams(window.location.search);
+  return p.get('mode') === 'view' ? 'view' : 'edit';
+})();
+if (APP_MODE === 'view') {
+  document.body.classList.add('mode-view');
+  document.title = '郊野宠物寄养工作台 - 查看模式';
+}
+</script>
+
+<!-- 顶部导航 -->
+<div class="topbar">
+  <div class="logo"><span class="icon">🐾</span> 郊野宠物寄养工作台<span class="view-badge">👁 查看模式</span></div>
+  <div class="nav">
+    <div class="nav-item active" onclick="switchPage('dashboard')">📊 数据看板</div>
+    <div class="nav-item" onclick="switchPage('booking')">🏠 订房系统</div>
+    <div class="nav-item" onclick="switchPage('food')">🦴 狗粮管理</div>
+    <div class="nav-item" onclick="switchPage('customer')">🐕 客户档案</div>
+    <div class="nav-item edit-only" onclick="switchPage('settings')">⚙️ 设置</div>
+    <div class="nav-item edit-only" onclick="showInstallPrompt()" title="安装到桌面" style="background:rgba(255,255,255,0.12)">📲 安装APP</div>
+  </div>
+  <div class="date" id="topDate"></div>
+</div>
+<!-- 底部导航（手机端显示） -->
+<div class="bottom-nav">
+  <div class="bn-item active" onclick="switchPage('dashboard')"><span class="icon">📊</span>看板</div>
+  <div class="bn-item" onclick="switchPage('booking')"><span class="icon">🏠</span>订房</div>
+  <div class="bn-item" onclick="switchPage('food')"><span class="icon">🦴</span>狗粮</div>
+  <div class="bn-item" onclick="switchPage('customer')"><span class="icon">🐕</span>客户</div>
+  <div class="bn-item bn-item-settings edit-only" onclick="switchPage('settings')"><span class="icon">⚙️</span>设置</div>
+</div>
+
+<div class="main">
+
+<!-- ====== 数据看板 ====== -->
+<div class="page active" id="page-dashboard">
+  <div class="occupancy-row" id="occRow"></div>
+  <div class="stats-grid" id="dashStats"></div>
+  <div class="chart-container">
+    <div class="card-title"><span class="left">📈 最近7天入住率趋势</span></div>
+    <div class="chart-bars" id="chartBars"></div>
+    <div style="height:30px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="left">🎂 近期狗狗生日提醒</span></div>
+    <div id="birthdayAlerts"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="left">🦴 狗粮库存预警</span><button class="btn btn-primary btn-sm" onclick="switchPage('food')">前往管理 →</button></div>
+    <div id="foodAlerts"></div>
+  </div>
+</div>
+
+<!-- ====== 订房系统 ====== -->
+<div class="page" id="page-booking">
+  <div class="card">
+    <div class="card-title">
+      <span class="left">🏠 房态看板</span>
+      <button class="btn btn-primary edit-only" onclick="openNewBooking()">➕ 新建预订</button>
+    </div>
+    <div class="room-tabs" id="roomTabs"></div>
+    <div class="room-stats" id="roomStats"></div>
+    <div id="roomGrid"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="left">📋 订单管理</span></div>
+    <div class="filter-bar">
+      <select id="orderFilterStatus" onchange="renderOrders()"><option value="">全部状态</option><option value="booked">已预订</option><option value="checked-in">入住中</option><option value="checked-out">已退房</option><option value="cancelled">已取消</option></select>
+      <select id="orderFilterArea" onchange="renderOrders()"><option value="">全部区域</option><option value="big">大狗区</option><option value="small">小狗区</option></select>
+      <input type="text" id="orderSearch" placeholder="搜索主人名/狗名/电话/房间号" oninput="renderOrders()" style="width:240px">
+    </div>
+    <div id="ordersTable"></div>
+  </div>
+</div>
+
+<!-- ====== 狗粮管理 ====== -->
+<div class="page" id="page-food">
+  <div class="stats-grid" id="foodStats"></div>
+  <div class="card">
+    <div class="card-title"><span class="left">💰 利润统计</span><select id="foodMonthSelect" onchange="renderFoodProfit()" style="padding:6px 12px;border:1px solid #DDD;border-radius:6px"></select></div>
+    <div id="foodProfitTable"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="left">📦 品牌库存</span><div class="edit-only"><button class="btn btn-success btn-sm" onclick="openFoodPurchase()">📥 进货入库</button><button class="btn btn-warning btn-sm" onclick="openFoodSale()">📤 销售出库</button><button class="btn btn-primary btn-sm" onclick="openFoodBrand()">🏷️ 品牌管理</button></div></div>
+    <div class="food-grid" id="foodGrid"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="left">📜 进销记录</span></div>
+    <div class="filter-bar">
+      <select id="foodRecordType" onchange="renderFoodRecords()"><option value="">全部记录</option><option value="purchase">进货记录</option><option value="sale">销售记录</option></select>
+      <select id="foodRecordBrand" onchange="renderFoodRecords()"></select>
+    </div>
+    <div id="foodRecordsTable"></div>
+  </div>
+</div>
+
+<!-- ====== 客户档案 ====== -->
+<div class="page" id="page-customer">
+  <div class="stats-grid" id="custStats"></div>
+  <div class="card">
+    <div class="card-title">
+      <span class="left">🐕 客户档案管理</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" class="edit-only">
+        <button class="btn btn-primary" onclick="openCustomerForm()">➕ 添加客户</button>
+        <button class="btn btn-success" onclick="document.getElementById('excelImportFile').click()">📥 Excel导入</button>
+        <button class="btn btn-warning" onclick="exportCustomersExcel()">📤 Excel导出</button>
+        <input type="file" id="excelImportFile" accept=".xlsx,.xls" style="display:none" onchange="handleExcelImport(event)">
+      </div>
+    </div>
+    <div class="filter-bar">
+      <input type="text" id="custSearch" placeholder="搜索主人名/狗名/电话" oninput="renderCustomers()" style="width:300px">
+      <select id="custFilterArea" onchange="renderCustomers()"><option value="">全部区域</option><option value="big">大狗区客户</option><option value="small">小狗区客户</option></select>
+    </div>
+    <div id="customerList"></div>
+  </div>
+</div>
+
+<!-- ====== 设置 ====== -->
+<div class="page" id="page-settings">
+  <div class="card">
+    <div class="card-title"><span class="left">⚙️ 系统设置</span></div>
+    <h3 style="margin:20px 0 12px">💰 房型价格设置</h3>
+    <p style="color:var(--gray);margin-bottom:12px">设置各房型价格（平时/假日/包月/包年）</p>
+    <div id="priceSettings"></div>
+    <hr style="margin:24px 0;border:none;border-top:1px solid var(--gray-light)">
+    <h3 style="margin:20px 0 12px">🏡 别墅名称管理</h3>
+    <p style="color:var(--gray);margin-bottom:12px">别墅1-别墅8可自定义名称</p>
+    <div id="villaNamesSettings"></div>
+    <hr style="margin:24px 0;border:none;border-top:1px solid var(--gray-light)">
+    <h3 style="margin:20px 0 12px">💇 员工管理</h3>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <input type="text" id="staffNameInput" placeholder="美容师名字" style="width:180px;padding:8px 12px;border:1px solid #DDD;border-radius:6px">
+      <button class="btn btn-primary btn-sm" onclick="addStaff()">➕ 添加员工</button>
+    </div>
+    <div id="staffList"></div>
+    <hr style="margin:24px 0;border:none;border-top:1px solid var(--gray-light)">
+    <h3 style="margin:20px 0 12px">💾 数据管理</h3>
+    <div style="display:flex;gap:12px;flex-wrap:wrap" class="edit-only">
+      <button class="btn btn-primary" onclick="manualSync()">☁️ 手动同步云端</button>
+      <button class="btn btn-success" onclick="exportData()">📥 导出数据备份</button>
+      <button class="btn btn-success" onclick="document.getElementById('importFile').click()">📤 导入数据恢复</button>
+      <button class="btn btn-danger" onclick="confirmReset()">🗑️ 清空所有数据</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+    <div id="syncStatus" style="margin-top:8px;font-size:13px;color:var(--gray)"></div>
+    <hr style="margin:24px 0;border:none;border-top:1px solid var(--gray-light)">
+    <h3 style="margin:20px 0 12px">📊 数据统计</h3>
+    <div id="systemStats" style="font-size:14px;line-height:2"></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- 模态框们 -->
+<div class="modal-overlay" id="modalRoom"><div class="modal"><div class="modal-header"><h3 id="modalRoomTitle">房间操作</h3><span class="close" onclick="closeModal('modalRoom')">&times;</span></div><div class="modal-body" id="modalRoomBody"></div><div class="modal-footer" id="modalRoomFooter"></div></div></div>
+<div class="modal-overlay" id="modalBooking"><div class="modal large"><div class="modal-header"><h3>📋 新建预订</h3><span class="close" onclick="closeModal('modalBooking')">&times;</span></div><div class="modal-body" id="bookingBody"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modalBooking')">取消</button><button class="btn btn-primary" onclick="saveBooking()">确认预订</button></div></div></div>
+<div class="modal-overlay" id="modalCheckout"><div class="modal"><div class="modal-header"><h3>💰 退房结算</h3><span class="close" onclick="closeModal('modalCheckout')">&times;</span></div><div class="modal-body" id="checkoutBody"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modalCheckout')">取消</button><button class="btn btn-success" onclick="confirmCheckout()">确认退房结算</button></div></div></div>
+<div class="modal-overlay" id="modalFoodBrand"><div class="modal large"><div class="modal-header"><h3>🏷️ 狗粮品牌管理</h3><span class="close" onclick="closeModal('modalFoodBrand')">&times;</span></div><div class="modal-body"><div style="margin-bottom:16px"><button class="btn btn-primary btn-sm" onclick="openBrandForm()">➕ 添加新品牌</button></div><div id="brandList"></div></div></div></div>
+<div class="modal-overlay" id="modalBrandForm"><div class="modal"><div class="modal-header"><h3 id="brandFormTitle">添加品牌</h3><span class="close" onclick="closeModal('modalBrandForm')">&times;</span></div><div class="modal-body"><input type="hidden" id="brandId"><div class="form-group"><label>品牌名称 <span class="required">*</span></label><input type="text" id="brandName" placeholder="如：皇家"></div><div class="form-group"><label>规格(kg/袋) <span class="required">*</span></label><input type="number" step="0.1" id="brandSpec" placeholder="如：10"></div><div class="form-row"><div class="form-group"><label>进货价(元/袋) <span class="required">*</span></label><input type="number" step="0.01" id="brandCost" placeholder="如：200"></div><div class="form-group"><label>销售价(元/袋) <span class="required">*</span></label><input type="number" step="0.01" id="brandPrice" placeholder="如：280"></div></div><div class="form-group"><label>库存预警阈值(袋)</label><input type="number" id="brandThreshold" value="5"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modalBrandForm')">取消</button><button class="btn btn-primary" onclick="saveBrand()">保存</button></div></div></div>
+<div class="modal-overlay" id="modalFoodPurchase"><div class="modal"><div class="modal-header"><h3>📥 进货入库</h3><span class="close" onclick="closeModal('modalFoodPurchase')">&times;</span></div><div class="modal-body"><div class="form-group"><label>选择品牌 <span class="required">*</span></label><select id="purchaseBrand" onchange="updatePurchaseInfo()"></select></div><div class="form-row"><div class="form-group"><label>进货数量(袋) <span class="required">*</span></label><input type="number" id="purchaseQty" placeholder="如：20" oninput="updatePurchaseInfo()"></div><div class="form-group"><label>进货单价(元/袋)</label><input type="number" step="0.01" id="purchaseCost" placeholder="自动填充，可修改"></div></div><div class="form-group"><label>进货日期</label><input type="date" id="purchaseDate"></div><div class="form-group"><label>备注</label><input type="text" id="purchaseNotes" placeholder="供应商、批次等"></div><div class="alert alert-info" id="purchasePreview" style="display:none"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modalFoodPurchase')">取消</button><button class="btn btn-success" onclick="savePurchase()">确认入库</button></div></div></div>
+<div class="modal-overlay" id="modalFoodSale"><div class="modal"><div class="modal-header"><h3>📤 销售出库</h3><span class="close" onclick="closeModal('modalFoodSale')">&times;</span></div><div class="modal-body"><div class="form-group"><label>选择品牌 <span class="required">*</span></label><select id="saleBrand" onchange="updateSaleInfo()"></select></div><div class="form-row"><div class="form-group"><label>销售数量(袋) <span class="required">*</span></label><input type="number" id="saleQty" placeholder="如：3" oninput="updateSaleInfo()"></div><div class="form-group"><label>销售单价(元/袋)</label><input type="number" step="0.01" id="salePrice" placeholder="自动填充，可修改"></div></div><div class="form-group"><label>购买人（可选）</label><input type="text" id="saleBuyer" placeholder="客户名/关联订单号"></div><div class="form-group"><label>销售日期</label><input type="date" id="saleDate"></div><div class="alert alert-info" id="salePreview" style="display:none"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modalFoodSale')">取消</button><button class="btn btn-warning" onclick="saveSale()">确认出库</button></div></div></div>
+<div class="modal-overlay" id="modalCustomer"><div class="modal large"><div class="modal-header"><h3 id="customerFormTitle">添加客户</h3><span class="close" onclick="closeModal('modalCustomer')">&times;</span></div><div class="modal-body" id="customerBody"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modalCustomer')">取消</button><button class="btn btn-primary" onclick="saveCustomer()">保存</button></div></div></div>
+<div class="modal-overlay" id="modalExcelImport"><div class="modal large"><div class="modal-header"><h3>📥 Excel批量导入客户</h3><span class="close" onclick="closeModal('modalExcelImport')">&times;</span></div><div class="modal-body" id="excelImportBody"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modalExcelImport')">取消</button><button class="btn btn-success" id="excelImportConfirmBtn" onclick="confirmExcelImport()">确认导入</button></div></div></div>
+
+<div class="toast" id="toast"></div>
+<div class="confirm-overlay" id="confirmOverlay"><div class="confirm-box"><div class="icon" id="confirmIcon">⚠️</div><div class="title" id="confirmTitle">确认操作</div><div class="msg" id="confirmMsg">确定要执行此操作吗？</div><div class="actions"><button class="btn btn-outline" onclick="closeConfirm()">取消</button><button class="btn btn-danger" id="confirmBtn">确认</button></div></div></div>
+
+<script>
+// ==================== 房间配置 ====================
+const ROOM_CONFIG = {
+  big: {
+    name: '大狗区',
+    areas: [
+      // A001-A007: 138/天, 十一178, 春节178, 包月2500, 包年23000
+      { code: 'A', label: 'A区(138)', type: 'big-A-138', price: 138, holidayPrice: 178, springPrice: 178, monthlyPrice: 2500, yearlyPrice: 23000, dogRate: 50, rooms: generateRooms('A', 1, 7) },
+      // A008-A010: 特标房 148/天, 十一188, 春节188, 包月2600, 包年24000
+      { code: 'A', label: 'A区(148特标)', type: 'big-A-148', price: 148, holidayPrice: 188, springPrice: 188, monthlyPrice: 2600, yearlyPrice: 24000, dogRate: 50, rooms: generateRooms('A', 8, 10) },
+      // A011-A017: 128/天, 十一168, 春节168, 包月2400, 包年22000
+      { code: 'A', label: 'A区(128)', type: 'big-A-128', price: 128, holidayPrice: 168, springPrice: 168, monthlyPrice: 2400, yearlyPrice: 22000, dogRate: 50, rooms: generateRooms('A', 11, 17) },
+      // B001-B002: 特标房 148/天
+      { code: 'B', label: 'B区(148特标)', type: 'big-B-148', price: 148, holidayPrice: 188, springPrice: 188, monthlyPrice: 2600, yearlyPrice: 24000, dogRate: 50, rooms: generateRooms('B', 1, 2) },
+      // B003,B005-B009,B011-B012,B015-B017: 128/天
+      { code: 'B', label: 'B区(128)', type: 'big-B-128', price: 128, holidayPrice: 168, springPrice: 168, monthlyPrice: 2400, yearlyPrice: 22000, dogRate: 50, rooms: generateRooms('B', 3, 17, ['B004','B010','B013','B014']) },
+      // VIP区: 238/天
+      { code: 'V', label: 'VIP区', type: 'big-VIP', price: 238, holidayPrice: 268, springPrice: 268, monthlyPrice: 3600, yearlyPrice: 33000, dogRate: 50, rooms: generateRooms('V', 1, 6) },
+      // 别墅区5间命名
+      { code: 'VB', label: '别墅区', type: 'big-villa', price: 258, holidayPrice: 288, springPrice: 288, monthlyPrice: 3800, yearlyPrice: 35000, dogRate: 50, rooms: ['锦园','乐府','福禄墅','乐麦墅','喜利墅'] },
+      // 别墅区8间编号（可改名）
+      { code: 'VB', label: '别墅区', type: 'big-villa-8', price: 258, holidayPrice: 288, springPrice: 288, monthlyPrice: 3800, yearlyPrice: 35000, dogRate: 50, rooms: ['别墅1','别墅2','别墅3','别墅4','别墅5','别墅6','别墅7','别墅8'] }
+    ]
+  },
+  small: {
+    name: '小狗区',
+    areas: [
+      // C01-C04: 高间 88/天, 十一108, 春节108, 包月1800, 包年16000
+      { code: 'C', label: 'C区高间', type: 'small-high', price: 88, holidayPrice: 108, springPrice: 108, monthlyPrice: 1800, yearlyPrice: 16000, dogRate: 30, rooms: generateRooms('C', 1, 4) },
+      // C05-C10: 单间 88/天
+      { code: 'C', label: 'C区单间', type: 'small-single', price: 88, holidayPrice: 108, springPrice: 108, monthlyPrice: 1800, yearlyPrice: 16000, dogRate: 30, rooms: generateRooms('C', 5, 10) },
+      // D01: VIP 138/天
+      { code: 'D', label: 'D区VIP', type: 'small-VIP', price: 138, holidayPrice: 138, springPrice: 138, monthlyPrice: 2200, yearlyPrice: 20000, dogRate: 30, rooms: ['D001'] },
+      // D02-D06: 单间 88/天
+      { code: 'D', label: 'D区单间', type: 'small-single', price: 88, holidayPrice: 108, springPrice: 108, monthlyPrice: 1800, yearlyPrice: 16000, dogRate: 30, rooms: generateRooms('D', 2, 6) },
+      // D07: VIP 138/天
+      { code: 'D', label: 'D区VIP', type: 'small-VIP', price: 138, holidayPrice: 138, springPrice: 138, monthlyPrice: 2200, yearlyPrice: 20000, dogRate: 30, rooms: ['D007'] },
+      // D08-D11: 单间 88/天
+      { code: 'D', label: 'D区单间', type: 'small-single', price: 88, holidayPrice: 108, springPrice: 108, monthlyPrice: 1800, yearlyPrice: 16000, dogRate: 30, rooms: generateRooms('D', 8, 11) },
+      // F01: VIP 138/天
+      { code: 'F', label: 'F区VIP', type: 'small-VIP', price: 138, holidayPrice: 138, springPrice: 138, monthlyPrice: 2200, yearlyPrice: 20000, dogRate: 30, rooms: ['F001'] },
+      // F02-F04: 标间 99/天
+      { code: 'F', label: 'F区标间', type: 'small-std', price: 99, holidayPrice: 129, springPrice: 129, monthlyPrice: 1900, yearlyPrice: 17000, dogRate: 30, rooms: generateRooms('F', 2, 4) }
+    ]
+  }
+};
+
+function generateRooms(prefix, start, end, exclude) {
+  exclude = exclude || [];
+  const rooms = [];
+  for (let i = start; i <= end; i++) {
+    const id = prefix + String(i).padStart(3, '0');
+    if (exclude.indexOf(id) === -1) rooms.push(id);
+  }
+  return rooms;
+}
+
+// ==================== 数据管理 ====================
+let DB = { rooms: {}, orders: [], foodBrands: [], foodRecords: [], prices: {}, history: [], customers: [], staff: [], villaNames: {} };
+const STORAGE_KEY = 'petBoardingDB_v3';
+
+// JSONBin.io 云端同步配置
+var JSONBIN_BIN_ID = '6a6c36d9da38895dfea749db';
+var JSONBIN_MASTER_KEY = '$2a$10$YyQwBxAKRA6w/w4f4dCb5u52GRjO4cK7U.R5F5sMxl2xBIvBhWTBW';
+var JSONBIN_API = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
+var lastSyncTime = 0;
+var isSyncing = false;
+
+function loadDB() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) { try { DB = JSON.parse(saved); } catch(e) { console.error('load fail', e); } }
+  DB.rooms = DB.rooms || {}; DB.orders = DB.orders || []; DB.foodBrands = DB.foodBrands || [];
+  DB.foodRecords = DB.foodRecords || []; DB.prices = DB.prices || {}; DB.history = DB.history || [];
+  DB.customers = DB.customers || []; DB.staff = DB.staff || []; DB.villaNames = DB.villaNames || {};
+  initRooms(); initDefaultPrices(); saveDB();
+}
+function saveDB() {
+  if (APP_MODE === 'view') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+  // 编辑模式自动上传到云端
+  syncToCloud();
+}
+
+// 上传数据到 JSONBin 云端
+function syncToCloud() {
+  if (APP_MODE === 'view' || isSyncing) return;
+  isSyncing = true;
+  var xhr = new XMLHttpRequest();
+  xhr.open('PUT', JSONBIN_API, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('X-Master-Key', JSONBIN_MASTER_KEY);
+  xhr.setRequestHeader('X-Bin-Versioning', 'false');
+  xhr.onload = function() {
+    isSyncing = false;
+    if (xhr.status === 200) {
+      lastSyncTime = Date.now();
+      console.log('数据已同步到 JSONBin');
+    }
+  };
+  xhr.onerror = function() { isSyncing = false; console.log('同步失败，不影响本地使用'); };
+  try { xhr.send(JSON.stringify(DB)); } catch(e) { isSyncing = false; }
+}
+
+// 从 JSONBin 云端拉取数据
+function syncFromCloud(callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', JSONBIN_API + '/latest', true);
+  xhr.setRequestHeader('X-Master-Key', JSONBIN_MASTER_KEY);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var resp = JSON.parse(xhr.responseText);
+        var cloudData = resp.record;
+        if (cloudData && cloudData.rooms) {
+          DB = cloudData;
+          DB.rooms = DB.rooms || {}; DB.orders = DB.orders || []; DB.foodBrands = DB.foodBrands || [];
+          DB.foodRecords = DB.foodRecords || []; DB.prices = DB.prices || {}; DB.history = DB.history || [];
+          DB.customers = DB.customers || []; DB.staff = DB.staff || []; DB.villaNames = DB.villaNames || {};
+          initRooms(); initDefaultPrices();
+          lastSyncTime = Date.now();
+          if (callback) callback(true);
+          return;
+        }
+      } catch(e) { console.error('解析云端数据失败', e); }
+    }
+    if (callback) callback(false);
+  };
+  xhr.onerror = function() { if (callback) callback(false); };
+  xhr.send();
+}
+
+function initRooms() {
+  ['big','small'].forEach(function(areaKey) {
+    ROOM_CONFIG[areaKey].areas.forEach(function(a) {
+      a.rooms.forEach(function(roomId) {
+        var displayLabel = DB.villaNames[roomId] || roomId;
+        if (!DB.rooms[roomId]) {
+          DB.rooms[roomId] = { id: roomId, area: areaKey, subArea: a.code, type: a.type, label: a.label + ' ' + displayLabel, status: 'free', orderId: null };
+        } else {
+          DB.rooms[roomId].area = areaKey;
+          DB.rooms[roomId].subArea = a.code;
+          DB.rooms[roomId].type = a.type;
+          DB.rooms[roomId].label = a.label + ' ' + displayLabel;
+        }
+        // 确保价格配置存在
+        if (!DB.prices[a.type]) {
+          DB.prices[a.type] = { normal: a.price, holiday: a.holidayPrice, spring: a.springPrice, monthly: a.monthlyPrice, yearly: a.yearlyPrice };
+        }
+      });
+    });
+  });
+}
+function initDefaultPrices() {
+  ['big','small'].forEach(function(areaKey) {
+    ROOM_CONFIG[areaKey].areas.forEach(function(a) {
+      if (!DB.prices[a.type]) {
+        DB.prices[a.type] = { normal: a.price, holiday: a.holidayPrice, spring: a.springPrice, monthly: a.monthlyPrice, yearly: a.yearlyPrice };
+      }
+    });
+  });
+}
+
+// ==================== 工具函数 ====================
+function $(id) { return document.getElementById(id); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function now() { return new Date().toLocaleString('zh-CN', { hour12: false }); }
+function formatDate(d) { return d ? new Date(d).toLocaleDateString('zh-CN') : '-'; }
+function daysBetween(d1, d2) { if (!d1 || !d2) return 0; return Math.ceil(Math.abs(new Date(d2) - new Date(d1)) / 86400000); }
+function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+function showToast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2500); }
+function closeModal(id) { $(id).classList.remove('show'); }
+let confirmCallback = null;
+function showConfirm(title, msg, cb, icon) { $('confirmIcon').textContent = icon||'⚠️'; $('confirmTitle').textContent = title; $('confirmMsg').textContent = msg; confirmCallback = cb; $('confirmOverlay').classList.add('show'); }
+$('confirmBtn').onclick = function() { if (confirmCallback) confirmCallback(); closeConfirm(); };
+function closeConfirm() { $('confirmOverlay').classList.remove('show'); confirmCallback = null; }
+
+// ==================== 页面切换 ====================
+function switchPage(name) {
+  // 查看模式下不允许进入设置页
+  if (APP_MODE === 'view' && name === 'settings') {
+    showToast('查看模式下仅管理员可访问设置');
+    return;
+  }
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  $('page-' + name).classList.add('active');
+  var navMap = { dashboard:0, booking:1, food:2, customer:3, settings:4 };
+  var navs = document.querySelectorAll('.nav-item');
+  if (navs[navMap[name]]) navs[navMap[name]].classList.add('active');
+  var bnItems = document.querySelectorAll('.bn-item');
+  if (bnItems[navMap[name]]) bnItems[navMap[name]].classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'booking') { renderRoomTabs(); renderRoomBoard(); renderOrders(); }
+  if (name === 'food') renderFoodPage();
+  if (name === 'customer') renderCustomers();
+  if (name === 'settings') renderSettings();
+}
+
+// ==================== 房态看板 ====================
+function getRoomsByArea(area) { return Object.values(DB.rooms).filter(function(r){return r.area === area;}); }
+
+// ==================== 价格系统 ====================
+// 春节日期对照表（2000-2035年农历正月初一对应的阳历日期）
+const SPRING_FESTIVAL_DATES = {
+  2024:'2024-02-10',2025:'2025-01-29',2026:'2026-02-17',2027:'2027-02-06',2028:'2028-01-26',
+  2029:'2029-02-13',2030:'2030-02-03',2031:'2031-01-23',2032:'2032-02-11',2033:'2033-01-31',
+  2034:'2034-02-19',2035:'2035-02-08'
+};
+
+function getSpringFestivalRange(year) {
+  var sf = SPRING_FESTIVAL_DATES[year];
+  if (!sf) return null;
+  var sfDate = new Date(sf + 'T00:00:00');
+  // 小年 = 春节 - 7天, 正月初八 = 春节 + 7天
+  var start = new Date(sfDate);
+  start.setDate(start.getDate() - 7);
+  var end = new Date(sfDate);
+  end.setDate(end.getDate() + 7);
+  return { start: start.toISOString().split('T')[0], end: end.toISOString().split('T')[0] };
+}
+
+function isNationalDayHoliday(dateStr) {
+  if (!dateStr) return false;
+  var d = new Date(dateStr + 'T00:00:00');
+  var m = d.getMonth() + 1, day = d.getDate();
+  return m === 10 && day >= 1 && day <= 7;
+}
+
+function isSpringFestival(dateStr) {
+  if (!dateStr) return false;
+  var d = new Date(dateStr + 'T00:00:00');
+  var year = d.getFullYear();
+  var range = getSpringFestivalRange(year);
+  if (range && dateStr >= range.start && dateStr <= range.end) return true;
+  // 可能跨年（如1月初还在上一年春节）
+  range = getSpringFestivalRange(year - 1);
+  if (range && dateStr >= range.start && dateStr <= range.end) return true;
+  return false;
+}
+
+function isHoliday(dateStr) {
+  return isNationalDayHoliday(dateStr) || isSpringFestival(dateStr);
+}
+
+// 获取房型配置
+function getRoomTypeConfig(roomType) {
+  var found = null;
+  ['big','small'].forEach(function(ak) {
+    ROOM_CONFIG[ak].areas.forEach(function(a) {
+      if (a.type === roomType) found = a;
+    });
+  });
+  return found;
+}
+
+// 获取房间日单价（含假日判断）
+function getRoomPrice(room, dateStr) {
+  var cfg = getRoomTypeConfig(room.type);
+  if (!cfg) return DB.prices[room.type] && DB.prices[room.type].normal || 0;
+  var pc = DB.prices[room.type] || { normal: cfg.price, holiday: cfg.holidayPrice, spring: cfg.springPrice, monthly: cfg.monthlyPrice, yearly: cfg.yearlyPrice };
+  dateStr = dateStr || today();
+  if (isNationalDayHoliday(dateStr)) return pc.holiday || cfg.holidayPrice;
+  if (isSpringFestival(dateStr)) return pc.spring || cfg.springPrice;
+  return pc.normal || cfg.price;
+}
+
+// 获取房型包月/包年价
+function getMonthlyPrice(roomType) {
+  var cfg = getRoomTypeConfig(roomType);
+  var pc = DB.prices[roomType] || {};
+  return pc.monthly || (cfg ? cfg.monthlyPrice : 0) || 0;
+}
+
+function getYearlyPrice(roomType) {
+  var cfg = getRoomTypeConfig(roomType);
+  var pc = DB.prices[roomType] || {};
+  return pc.yearly || (cfg ? cfg.yearlyPrice : 0) || 0;
+}
+
+// 天数折扣
+function getDiscount(days, area) {
+  if (area === 'big') {
+    if (days <= 3) return 1.0;
+    if (days <= 6) return 0.93;
+    if (days <= 14) return 0.85;
+    return 0.75;
+  } else {
+    if (days <= 9) return 1.0;
+    return 0.90;
+  }
+}
+
+// 综合计算房费（退房时使用）
+// 返回 { roomFee, dailyPrice, discount, isMonthly, isYearly, basePrice }
+function calcRoomFee(roomType, days, isMonthly, isYearly, dateStr) {
+  var cfg = getRoomTypeConfig(roomType);
+  if (!cfg) return { roomFee: 0, dailyPrice: 0, discount: 1, isMonthly: false, isYearly: false, basePrice: 0 };
+  
+  var isHol = isHoliday(dateStr);
+  var pc = DB.prices[roomType] || { normal: cfg.price, holiday: cfg.holidayPrice, spring: cfg.springPrice, monthly: cfg.monthlyPrice, yearly: cfg.yearlyPrice };
+  var basePrice = isHol ? (isNationalDayHoliday(dateStr) ? (pc.holiday||cfg.holidayPrice) : (pc.spring||cfg.springPrice)) : (pc.normal||cfg.price);
+  var area = cfg.code === 'V' || cfg.code === 'VB' ? 'big' : (['C','D','F'].indexOf(cfg.code) >= 0 ? 'small' : 'big');
+  
+  // 包年/包月优先
+  if (isYearly) {
+    return { roomFee: pc.yearly || cfg.yearlyPrice || 0, dailyPrice: 0, discount: 0, isMonthly: false, isYearly: true, basePrice: 0 };
+  }
+  if (isMonthly) {
+    return { roomFee: pc.monthly || cfg.monthlyPrice || 0, dailyPrice: 0, discount: 0, isMonthly: true, isYearly: false, basePrice: 0 };
+  }
+  
+  // 假日不打折
+  var discount = isHol ? 1.0 : getDiscount(days, area);
+  var dailyPrice = Math.round(basePrice * discount);
+  
+  // 折扣底线：不低于包月日均价
+  var monthlyDaily = (pc.monthly || cfg.monthlyPrice || 0) / 30;
+  if (monthlyDaily > 0 && dailyPrice < monthlyDaily) {
+    dailyPrice = Math.round(monthlyDaily);
+    discount = 0; // 标记为包月底价
+  }
+  
+  return { roomFee: dailyPrice * days, dailyPrice: dailyPrice, discount: discount, isMonthly: false, isYearly: false, basePrice: basePrice };
+}
+
+// 多狗服务费
+function calcDogExtraFee(dogCount, days, area) {
+  if (dogCount <= 1) return 0;
+  var rate = area === 'small' ? 30 : 50;
+  return (dogCount - 1) * rate * days;
+}
+
+function getDogRate(area) { return area === 'small' ? 30 : 50; }
+
+// 判断时间是否在8:00-20:00之间
+function isInDaytime(timeStr) {
+  if (!timeStr) return true; // 未填时间默认算白天
+  return timeStr >= '08:00' && timeStr <= '20:00';
+}
+
+// 计算接送费用
+function calcPickupFee(order, days) {
+  if (!days) days = order.days || 0;
+  var room = DB.rooms[order.roomId];
+  var roomType = room ? room.type : '';
+  var isVip = roomType.startsWith('big-VIP') || roomType.startsWith('big-villa');
+  
+  var cityFee = 0, airportFee = 0;
+  var detailParts = [];
+  
+  // === 市内接送 ===
+  if (order.needCityPickup) {
+    var trips = (order.cityPickupDir === 'both') ? 2 : 1;
+    var cityRate = (days >= 5) ? 0 : 40;
+    cityFee = trips * cityRate;
+    if (cityFee > 0) {
+      detailParts.push('市内接送 ' + trips + '程×¥' + cityRate + '=¥' + cityFee);
+    } else if (days >= 5) {
+      detailParts.push('市内接送：住满5天免费');
+    }
+  }
+  
+  // === 接送机 ===
+  if (order.needAirportPickup) {
+    var trips2 = (order.airportPickupDir === 'both') ? 2 : 1;
+    var airportRate;
+    if (days >= 5) {
+      if (isVip) {
+        airportRate = 0;
+        detailParts.push('接送机：VIP/别墅免费');
+      } else {
+        var daytime = isInDaytime(order.airportPickupTime);
+        airportRate = daytime ? 0 : 30;
+        if (airportRate > 0) {
+          detailParts.push('接送机 ' + trips2 + '程×¥' + airportRate + '（超时）=¥' + (trips2*airportRate));
+        } else {
+          detailParts.push('接送机：住满5天 8:00-20:00免费');
+        }
+      }
+    } else {
+      airportRate = 30;
+      detailParts.push('接送机 ' + trips2 + '程×¥' + airportRate + '=¥' + (trips2*airportRate));
+    }
+    airportFee = trips2 * airportRate;
+  }
+  
+  return {
+    cityFee: cityFee,
+    airportFee: airportFee,
+    total: cityFee + airportFee,
+    detail: detailParts.join(' | ')
+  };
+}
+
+function getRoomOrder(room) { if (!room.orderId) return null; return DB.orders.find(function(o){return o.id === room.orderId;}); }
+function isOwnDogRoom(room) {
+  if (!room.orderId) return false;
+  var order = getRoomOrder(room);
+  return order && order.isOwnDog === true;
+}
+
+let currentRoomTab = 'all';
+function renderRoomTabs() {
+  var html = '<div class="room-tab ' + (currentRoomTab==='all'?'active':'') + '" onclick="switchRoomTab(\'all\')">全部（' + Object.keys(DB.rooms).length + '间）</div>';
+  html += '<div class="room-tab ' + (currentRoomTab==='big'?'active':'') + '" onclick="switchRoomTab(\'big\')">🐕 大狗区</div>';
+  html += '<div class="room-tab ' + (currentRoomTab==='small'?'active':'') + '" onclick="switchRoomTab(\'small\')">🐶 小狗区</div>';
+  $('roomTabs').innerHTML = html;
+}
+function switchRoomTab(tab) { currentRoomTab = tab; renderRoomTabs(); renderRoomBoard(); }
+
+function renderRoomBoard() {
+  var rooms;
+  if (currentRoomTab === 'all') rooms = Object.values(DB.rooms);
+  else rooms = getRoomsByArea(currentRoomTab);
+  var free=0, booked=0, occupied=0, maint=0, ownDog=0;
+  rooms.forEach(function(r){ if(r.status==='free')free++; else if(r.status==='booked')booked++; else if(r.status==='occupied'){if(isOwnDogRoom(r)){ownDog++;}else{occupied++;}} else if(r.status==='maintenance')maint++; });
+  var total = rooms.length;
+  var occRate = total ? Math.round(occupied/total*100) : 0;
+  $('roomStats').innerHTML = '<div class="item"><div class="dot dot-free"></div> 空闲 ' + free + '</div><div class="item"><div class="dot dot-booked"></div> 已预订 ' + booked + '</div><div class="item"><div class="dot dot-occupied"></div> 入住中 ' + occupied + '</div>' + (ownDog>0?'<div class="item">🏠 自家 ' + ownDog + '</div>':'') + '<div class="item"><div class="dot dot-maintenance"></div> 维修 ' + maint + '</div><div class="item" style="margin-left:auto;font-weight:700;color:var(--primary)">入住率 ' + occRate + '%</div>';
+
+  // 按子区分组
+  var groups = {};
+  rooms.forEach(function(r) {
+    var key = r.area + '-' + (r.subArea||'');
+    if (!groups[key]) groups[key] = { area: r.area, subArea: r.subArea||'', label: (r.area==='big'?'大狗区':'小狗区') + ' ' + (r.subArea||'') + '区', rooms: [] };
+    groups[key].rooms.push(r);
+  });
+  var html = '';
+  Object.values(groups).forEach(function(g) {
+    g.rooms.sort(function(a,b){return a.id.localeCompare(b.id);});
+    var displayPrice = (DB.prices[g.rooms[0].type] && DB.prices[g.rooms[0].type].normal) || 0;
+    html += '<div class="room-section"><div class="room-section-title">' + g.label + '<span style="font-size:12px;color:var(--gray);font-weight:400">' + g.rooms.length + '间 · ¥' + displayPrice + '/天</span></div><div class="room-grid">';
+    g.rooms.forEach(function(r) {
+      var sm = {free:['空闲','free'],booked:['已预订','booked'],occupied:['入住中','occupied'],maintenance:['维修中','maintenance']}[r.status] || ['未知','free'];
+      var gi = '';
+      if (r.status === 'occupied' || r.status === 'booked') {
+        var order = getRoomOrder(r);
+        if (order) {
+          var ownTag = order.isOwnDog ? ' 🏠' : '';
+          var typeTag = order.orderType === 'training' ? ' 🎓' : '';
+          var dateStr = order.isLongTerm ? (formatDate(order.checkIn) + '~长期') : (formatDate(order.checkIn) + '~' + formatDate(order.checkOut||order.expectedCheckOut));
+          gi = '<div class="guest-info"><div>🐶 ' + order.dogName + ownTag + typeTag + '</div><div>👤 ' + order.ownerName + '</div><div>📅 ' + dateStr + '</div></div>';
+        }
+      }
+      html += '<div class="room-card ' + sm[1] + '" onclick="openRoomAction(\'' + r.id + '\')"><div class="room-no">' + r.id + '</div><div class="room-type">' + g.label + '</div><span class="room-status">' + sm[0] + '</span>' + gi + '</div>';
+    });
+    html += '</div></div>';
+  });
+  $('roomGrid').innerHTML = html;
+}
+
+function openRoomAction(roomId) {
+  var room = DB.rooms[roomId]; if (!room) return;
+  var order = getRoomOrder(room); var price = getRoomPrice(room);
+  $('modalRoomTitle').textContent = room.id + ' · ' + room.label;
+  var body = '', footer = '';
+  if (room.status === 'free') {
+    body = '<div class="alert alert-success"><strong>✅ 房间空闲</strong></div><div style="margin:16px 0"><div style="margin-bottom:8px"><strong>房间号：</strong>' + room.id + '</div><div style="margin-bottom:8px"><strong>区域：</strong>' + room.label + '</div><div style="margin-bottom:8px"><strong>日单价：</strong>¥' + price + '/天</div></div>';
+    footer = (APP_MODE === 'view' ? '' : '<button class="btn btn-outline" onclick="setRoomMaintenance(\'' + roomId + '\')">🔧 设为维修</button>') + '<button class="btn btn-primary edit-only" onclick="closeModal(\'modalRoom\');openNewBooking(\'' + roomId + '\')">📋 预订此房</button>';
+  } else if (room.status === 'booked') {
+    body = renderOrderInfo(order, room, '已预订');
+    footer = (APP_MODE === 'view' ? '' : '<button class="btn btn-outline" onclick="cancelBooking(\'' + order.id + '\')">❌ 取消预订</button>') + '<button class="btn btn-success edit-only" onclick="checkIn(\'' + order.id + '\')">✅ 办理入住</button>';
+  } else if (room.status === 'occupied') {
+    body = renderOrderInfo(order, room, '入住中');
+    footer = '<button class="btn btn-warning edit-only" onclick="openCheckout(\'' + order.id + '\')">💰 退房结算</button>';
+  } else if (room.status === 'maintenance') {
+    body = '<div class="alert alert-warning"><strong>🔧 维修中</strong></div>';
+    footer = (APP_MODE === 'view' ? '' : '<button class="btn btn-success" onclick="setRoomFree(\'' + roomId + '\')">✅ 设为空闲</button>');
+  }
+  $('modalRoomBody').innerHTML = body; $('modalRoomFooter').innerHTML = footer;
+  $('modalRoom').classList.add('show');
+}
+
+function renderOrderInfo(order, room, label) {
+  if (!order) return '<div class="alert alert-danger">订单缺失</div>';
+  var price = getRoomPrice(room);
+  var days;
+  if (order.isLongTerm && order.actualCheckIn) {
+    days = daysBetween(order.actualCheckIn, today());
+  } else if (order.isLongTerm) {
+    days = daysBetween(order.checkIn, today());
+  } else {
+    days = daysBetween(order.checkIn, order.checkOut || order.expectedCheckOut);
+  }
+  var typeLabel = order.orderType === 'training' ? '训练' : '寄养';
+  var ownLabel = order.isOwnDog ? ' · 🏠自家狗' : '';
+  var html = '<div class="alert alert-info"><strong>📋 ' + label + '</strong></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">';
+  html += '<div><strong>主人：</strong>' + order.ownerName + '</div><div><strong>电话：</strong>' + order.phone + '</div>';
+  html += '<div><strong>狗名：</strong>' + order.dogName + '</div><div><strong>品种：</strong>' + (order.breed||'-') + '</div>';
+  html += '<div><strong>体重：</strong>' + (order.weight||'-') + 'kg</div><div><strong>日单价：</strong>¥' + price + '/天</div>';
+  html += '<div><strong>类型：</strong>' + typeLabel + ownLabel + '</div><div><strong>入住：</strong>' + formatDate(order.checkIn) + '</div>';
+  if (order.isLongTerm) {
+    html += '<div><strong>退房：</strong>长期寄养</div><div><strong>已住：</strong>' + days + '天</div>';
+  } else {
+    html += '<div><strong>预计退房：</strong>' + formatDate(order.checkOut||order.expectedCheckOut) + '</div><div><strong>天数：</strong>' + days + '天</div>';
+  }
+  html += '</div>';
+  if (order.orderType === 'training' && order.trainingItems) html += '<div class="alert alert-info"><strong>🎓 训练项目：</strong>' + order.trainingItems + '</div>';
+  if (order.notes) html += '<div class="alert alert-warning"><strong>备注：</strong>' + order.notes + '</div>';
+  if (room.status==='occupied') html += '<div class="alert alert-info">💰 预估：' + days + '天 × ¥' + price + ' = <strong>¥' + (days*price) + '</strong></div>';
+  return html;
+}
+
+function setRoomMaintenance(roomId) { DB.rooms[roomId].status='maintenance'; DB.rooms[roomId].orderId=null; saveDB(); closeModal('modalRoom'); renderRoomBoard(); showToast('已设为维修'); }
+function setRoomFree(roomId) { DB.rooms[roomId].status='free'; DB.rooms[roomId].orderId=null; saveDB(); closeModal('modalRoom'); renderRoomBoard(); showToast('已设为空闲'); }
+
+// ==================== 预订 ====================
+function openNewBooking(roomId) {
+  var freeRooms = Object.values(DB.rooms).filter(function(r){return r.status==='free';});
+  var groups = {};
+  freeRooms.forEach(function(r) {
+    var key = r.area + '-' + r.subArea;
+    if (!groups[key]) groups[key] = { label: (r.area==='big'?'大狗区':'小狗区')+' '+r.subArea+'区', rooms: [] };
+    groups[key].rooms.push(r);
+  });
+  var roomHtml = '';
+  Object.values(groups).forEach(function(g) {
+    g.rooms.sort(function(a,b){return a.id.localeCompare(b.id);});
+    var displayPrice = (DB.prices[g.rooms[0].type] && DB.prices[g.rooms[0].type].normal) || 0;
+    roomHtml += '<optgroup label="' + g.label + '（¥' + displayPrice + '/天）">';
+    g.rooms.forEach(function(r) { roomHtml += '<option value="' + r.id + '">' + r.id + ' · ' + g.label + '</option>'; });
+    roomHtml += '</optgroup>';
+  });
+  if (!roomHtml) roomHtml = '<option value="">当前无空闲房间</option>';
+
+  // 客户选择下拉
+  var custHtml = '<option value="">+ 新建客户（手动填写）</option>';
+  DB.customers.forEach(function(c) {
+    var dogsNames = (c.dogs||[]).map(function(d){return d.name;}).join(',');
+    custHtml += '<option value="' + c.id + '">' + c.ownerName + ' · ' + c.phone + ' · 🐶' + dogsNames + '</option>';
+  });
+
+  $('bookingBody').innerHTML = ''
+    + '<div class="form-row"><div class="form-group"><label>订单类型</label><select id="bkOrderType" onchange="toggleTrainingItems()"><option value="boarding">寄养</option><option value="training">训练</option></select></div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkOwnDog" style="width:auto;margin-right:6px">自家狗（不计入入住率）</label></div></div>'
+    + '<div class="form-row"><div class="form-group"><label>选择房间 <span class="required">*</span></label><select id="bkRoom" onchange="updatePickupEstimate()">' + roomHtml + '</select></div>'
+    + '<div class="form-group"><label>选择客户</label><select id="bkCustomer" onchange="onCustomerSelect()">' + custHtml + '</select><span style="font-size:12px;color:var(--gray)">选已有客户自动填充，选「新建」手动填写</span></div></div>'
+    + '<div class="form-row"><div class="form-group" style="position:relative"><label>主人姓名 <span class="required">*</span></label><input type="text" id="bkOwner" placeholder="输入姓名自动匹配已有客户" oninput="onOwnerInput()" onfocus="onOwnerInput()" autocomplete="off"><div class="cust-suggest" id="bkOwnerSuggest"></div></div>'
+    + '<div class="form-group" style="position:relative"><label>联系电话 <span class="required">*</span></label><input type="tel" id="bkPhone" placeholder="输入电话自动匹配已有客户" oninput="onPhoneInput()" onfocus="onPhoneInput()" autocomplete="off"><div class="cust-suggest" id="bkPhoneSuggest"></div></div></div>'
+    + '<div class="form-row"><div class="form-group" style="position:relative"><label>身份证号</label><input type="text" id="bkIdCard" placeholder="输入身份证号自动匹配" oninput="onIdCardInput()" onfocus="onIdCardInput()" autocomplete="off"><div class="cust-suggest" id="bkIdCardSuggest"></div></div></div>'
+    + '<div class="form-row"><div class="form-group" style="position:relative"><label>狗狗名字 <span class="required">*</span></label><input type="text" id="bkDogName" placeholder="输入狗名自动匹配" oninput="onDogNameInput()" onfocus="onDogNameInput()" autocomplete="off"><div class="cust-suggest" id="bkDogSuggest"></div></div>'
+    + '<div class="form-group"><label>品种</label><input type="text" id="bkBreed" placeholder="如：金毛"></div></div>'
+    + '<div class="form-row-3"><div class="form-group"><label>同住狗狗数</label><input type="number" id="bkDogCount" value="1" min="1" placeholder="1"></div>'
+    + '<div class="form-group"><label>体重(kg)</label><input type="number" id="bkWeight" placeholder="如：15"></div>'
+    + '<div class="form-group"><label>性别</label><select id="bkGender"><option value="">未知</option><option value="公">公</option><option value="母">母</option></select></div>'
+    + '<div class="form-group"><label>🎂 生日</label><input type="date" id="bkBirthday"></div></div>'
+    + '<div class="form-row"><div class="form-group"><label>入住日期 <span class="required">*</span></label><input type="date" id="bkCheckIn" value="' + today() + '" onchange="updatePickupEstimate()"></div>'
+    + '<div class="form-group" id="bkCheckOutGroup"><label>预计退房日期 <span class="required">*</span></label><input type="date" id="bkCheckOut" onchange="updatePickupEstimate()"></div></div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkLongTerm" onchange="toggleLongTerm()" style="width:auto;margin-right:6px">长期寄养（不填退房日期，退房时按实际天数结算）</label></div>'
+    + '<div class="form-group" id="bkTrainingGroup" style="display:none"><label>🎓 训练项目</label><textarea id="bkTrainingItems" rows="3" placeholder="请填写训练内容，如：基础服从训练、行为纠正、社会化训练等"></textarea></div>'
+    + '<div class="form-row"><div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkBath" onchange="toggleBathGroom(\'bkBath\',\'bkBathFee\')" style="width:auto;margin-right:6px">🛁 洗澡</label><input type="number" id="bkBathFee" value="0" placeholder="费用" disabled></div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkGrooming" onchange="toggleBathGroom(\'bkGrooming\',\'bkGroomingFee\')" style="width:auto;margin-right:6px">✂️ 美容</label><input type="number" id="bkGroomingFee" value="0" placeholder="费用" disabled></div></div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkNeedCityPickup" onchange="toggleCityPickup()" style="width:auto;margin-right:6px">🚗 需要市内接送</label></div>'
+    + '<div id="bkCityPickupDetail" style="display:none">'
+    + '<div class="form-row"><div class="form-group"><label>接送方向</label><select id="bkCityPickupDir" onchange="updatePickupEstimate()"><option value="in">只接来</option><option value="out">只送回</option><option value="both">接送都需</option></select></div>'
+    + '<div class="form-group"><label>接送地址</label><input type="text" id="bkCityPickupAddr" placeholder="家庭地址"></div></div>'
+    + '<div class="form-group" style="font-size:12px;color:var(--gray);margin-top:-8px" id="bkCityPickupEstimate"></div>'
+    + '</div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="bkNeedAirportPickup" onchange="toggleAirportPickup()" style="width:auto;margin-right:6px">✈️ 需要接送机</label></div>'
+    + '<div id="bkAirportPickupDetail" style="display:none">'
+    + '<div class="form-row"><div class="form-group"><label>接送方向</label><select id="bkAirportPickupDir" onchange="updatePickupEstimate()"><option value="in">只接机</option><option value="out">只送机</option><option value="both">都需</option></select></div>'
+    + '<div class="form-group"><label>接送时间</label><input type="time" id="bkAirportPickupTime" onchange="updatePickupEstimate()"></div></div>'
+    + '<div class="form-group" style="font-size:12px;color:var(--gray);margin-top:-8px" id="bkAirportPickupEstimate"></div>'
+    + '</div>'
+    + '<div class="form-group"><label>备注</label><textarea id="bkNotes" rows="3" placeholder="饮食要求、健康状况、特殊习惯等"></textarea></div>';
+
+  if (roomId) { setTimeout(function(){ $('bkRoom').value = roomId; }, 50); }
+  $('modalBooking').classList.add('show');
+}
+
+// 市内接送切换
+function toggleCityPickup() {
+  var checked = $('bkNeedCityPickup').checked;
+  $('bkCityPickupDetail').style.display = checked ? '' : 'none';
+  if (checked) updatePickupEstimate();
+}
+// 接送机切换
+function toggleAirportPickup() {
+  var checked = $('bkNeedAirportPickup').checked;
+  $('bkAirportPickupDetail').style.display = checked ? '' : 'none';
+  if (checked) updatePickupEstimate();
+}
+// 更新接送费用预估
+function updatePickupEstimate() {
+  var roomId = $('bkRoom').value;
+  var checkIn = $('bkCheckIn').value;
+  var checkOut = $('bkCheckOut').value;
+  var isLong = $('bkLongTerm').checked;
+  var days = 0;
+  if (!isLong && checkIn && checkOut) days = daysBetween(checkIn, checkOut);
+  else if (isLong) days = 30; // 长期预估30天
+  
+  // 市内接送预估
+  if ($('bkNeedCityPickup').checked && days > 0) {
+    var dir = $('bkCityPickupDir').value;
+    var trips = (dir === 'both') ? 2 : 1;
+    var rate = (days >= 5) ? 0 : 40;
+    var cityFee = trips * rate;
+    $('bkCityPickupEstimate').innerHTML = (days>=5?'✅ 住满5天免费':'') + (cityFee>0?' 预估费用：¥'+cityFee+'（'+trips+'程×¥'+rate+'）':'');
+  } else if ($('bkNeedCityPickup').checked) {
+    $('bkCityPickupEstimate').innerHTML = '请先选择入住/退房日期';
+  }
+  
+  // 接送机预估
+  if ($('bkNeedAirportPickup').checked && days > 0) {
+    var room = roomId ? DB.rooms[roomId] : null;
+    var isVip = room && (room.type||'').startsWith('big-VIP') || (room.type||'').startsWith('big-villa');
+    var dir2 = $('bkAirportPickupDir').value;
+    var trips2 = (dir2 === 'both') ? 2 : 1;
+    var rate2;
+    if (days >= 5) {
+      if (isVip) { rate2 = 0; }
+      else {
+        var timeVal = $('bkAirportPickupTime').value;
+        var isDaytime = !timeVal || (timeVal >= '08:00' && timeVal <= '20:00');
+        rate2 = isDaytime ? 0 : 30;
+      }
+    } else { rate2 = 30; }
+    var airportFee = trips2 * rate2;
+    $('bkAirportPickupEstimate').innerHTML = (airportFee===0?'✅ 免费':'') + (airportFee>0?' 预估费用：¥'+airportFee+'（'+trips2+'程×¥'+rate2+'）':'');
+  } else if ($('bkNeedAirportPickup').checked) {
+    $('bkAirportPickupEstimate').innerHTML = '请先选择入住/退房日期';
+  }
+}
+
+// 长期寄养切换
+function toggleLongTerm() {
+  var isLong = $('bkLongTerm').checked;
+  var checkoutGroup = $('bkCheckOutGroup');
+  if (isLong) {
+    checkoutGroup.style.display = 'none';
+    $('bkCheckOut').value = '';
+  } else {
+    checkoutGroup.style.display = '';
+  }
+}
+
+// 训练项目文本框显示/隐藏
+function toggleTrainingItems() {
+  var orderType = $('bkOrderType').value;
+  var trainingGroup = $('bkTrainingGroup');
+  if (trainingGroup) {
+    trainingGroup.style.display = (orderType === 'training') ? '' : 'none';
+  }
+}
+
+// 预订表单洗澡美容勾选切换
+function toggleBathGroom(checkboxId, inputId) {
+  var checked = $(checkboxId).checked;
+  var input = $(inputId);
+  input.disabled = !checked;
+  if (!checked) input.value = 0;
+}
+
+// 选择已有客户时自动填充
+function onCustomerSelect() {
+  var cid = $('bkCustomer').value;
+  if (!cid) {
+    // 新建模式，清空表单
+    $('bkOwner').value = ''; $('bkPhone').value = ''; $('bkIdCard').value = ''; $('bkDogName').value = ''; $('bkBreed').value = ''; $('bkWeight').value = ''; $('bkGender').value = ''; $('bkBirthday').value = '';
+    $('bkDogList').innerHTML = '';
+    $('bkOwner').readOnly = false; $('bkPhone').readOnly = false; $('bkIdCard').readOnly = false;
+    selectedCustomerId = null;
+    return;
+  }
+  var c = DB.customers.find(function(x){return x.id===cid;});
+  if (!c) return;
+  $('bkOwner').value = c.ownerName;
+  $('bkOwner').readOnly = true;
+  $('bkPhone').value = c.phone;
+  $('bkPhone').readOnly = true;
+  $('bkIdCard').value = c.idCard || '';
+  $('bkIdCard').readOnly = true;
+  $('bkDogName').value = '';
+  $('bkBreed').value = '';
+  $('bkWeight').value = '';
+  $('bkGender').value = '';
+  $('bkBirthday').value = '';
+  // 填充狗狗下拉列表
+  var dl = '';
+  (c.dogs||[]).forEach(function(d) {
+    dl += '<option value="' + d.name + '">' + (d.breed?d.breed:'') + '</option>';
+  });
+  $('bkDogList').innerHTML = dl;
+  // 监听狗名输入，自动填充品种/体重/性别/生日
+  $('bkDogName').oninput = function() {
+    var dn = $('bkDogName').value.trim();
+    var dog = (c.dogs||[]).find(function(d){return d.name === dn;});
+    if (dog) {
+      $('bkBreed').value = dog.breed || '';
+      $('bkWeight').value = dog.weight || '';
+      $('bkGender').value = dog.gender || '';
+      $('bkBirthday').value = dog.birthday || '';
+    }
+  };
+}
+
+// 自动匹配客户 - 输入主人姓名时
+var selectedCustomerId = null;
+function onOwnerInput() {
+  var val = $('bkOwner').value.trim().toLowerCase();
+  var suggestBox = $('bkOwnerSuggest');
+  if (!val || val.length < 1) { suggestBox.classList.remove('show'); selectedCustomerId = null; return; }
+  var matches = DB.customers.filter(function(c) {
+    return (c.ownerName||'').toLowerCase().includes(val) || (c.phone||'').includes(val);
+  }).slice(0, 6);
+  if (matches.length === 0) { suggestBox.classList.remove('show'); return; }
+  var html = '';
+  matches.forEach(function(c) {
+    var dogs = (c.dogs||[]).map(function(d){return d.name;}).join('、');
+    html += '<div class="item" onclick="selectSuggestCustomer(\'' + c.id + '\')">'
+      + '<span>' + c.ownerName + ' <span class="phone">' + c.phone + '</span></span>'
+      + '<span class="dogs">🐶 ' + dogs + '</span></div>';
+  });
+  suggestBox.innerHTML = html;
+  suggestBox.classList.add('show');
+}
+
+// 自动匹配客户 - 输入电话时
+function onPhoneInput() {
+  var val = $('bkPhone').value.trim();
+  var suggestBox = $('bkPhoneSuggest');
+  if (!val || val.length < 2) { suggestBox.classList.remove('show'); selectedCustomerId = null; return; }
+  var matches = DB.customers.filter(function(c) {
+    return (c.phone||'').includes(val) || (c.ownerName||'').toLowerCase().includes(val.toLowerCase());
+  }).slice(0, 6);
+  if (matches.length === 0) { suggestBox.classList.remove('show'); return; }
+  var html = '';
+  matches.forEach(function(c) {
+    var dogs = (c.dogs||[]).map(function(d){return d.name;}).join('、');
+    html += '<div class="item" onclick="selectSuggestCustomer(\'' + c.id + '\')">'
+      + '<span>' + c.phone + ' <span class="phone">' + c.ownerName + '</span></span>'
+      + '<span class="dogs">🐶 ' + dogs + '</span></div>';
+  });
+  suggestBox.innerHTML = html;
+  suggestBox.classList.add('show');
+}
+
+// 自动匹配客户 - 输入身份证号时
+function onIdCardInput() {
+  var val = $('bkIdCard').value.trim();
+  var suggestBox = $('bkIdCardSuggest');
+  if (!val || val.length < 2) { suggestBox.classList.remove('show'); return; }
+  var matches = DB.customers.filter(function(c) {
+    return (c.idCard||'').includes(val);
+  }).slice(0, 6);
+  if (matches.length === 0) { suggestBox.classList.remove('show'); return; }
+  var html = '';
+  matches.forEach(function(c) {
+    var dogs = (c.dogs||[]).map(function(d){return d.name;}).join('、');
+    html += '<div class="item" onclick="selectSuggestCustomer(\'' + c.id + '\')">'
+      + '<span>' + c.ownerName + ' <span class="phone">' + c.phone + '</span></span>'
+      + '<span class="phone" style="font-size:11px">' + (c.idCard||'') + '</span>'
+      + '<span class="dogs">🐶 ' + dogs + '</span></div>';
+  });
+  suggestBox.innerHTML = html;
+  suggestBox.classList.add('show');
+}
+
+// 选中匹配的客户，自动填充
+function selectSuggestCustomer(cid) {
+  var c = DB.customers.find(function(x){return x.id===cid;});
+  if (!c) return;
+  selectedCustomerId = cid;
+  $('bkOwner').value = c.ownerName;
+  $('bkPhone').value = c.phone;
+  $('bkIdCard').value = c.idCard || '';
+  $('bkDogName').value = '';
+  $('bkBreed').value = '';
+  $('bkWeight').value = '';
+  $('bkGender').value = '';
+  $('bkBirthday').value = '';
+  // 关闭建议框
+  $('bkOwnerSuggest').classList.remove('show');
+  $('bkPhoneSuggest').classList.remove('show');
+  $('bkIdCardSuggest').classList.remove('show');
+  // 自动弹出狗狗列表
+  showDogSuggest();
+  showToast('已匹配客户：' + c.ownerName + '，请选择狗狗');
+}
+
+// 显示该客户的所有狗狗供选择
+function showDogSuggest() {
+  if (!selectedCustomerId) return;
+  var c = DB.customers.find(function(x){return x.id===selectedCustomerId;});
+  if (!c || !c.dogs || c.dogs.length === 0) return;
+  var suggestBox = $('bkDogSuggest');
+  var html = '';
+  c.dogs.forEach(function(d) {
+    html += '<div class="item" onclick="selectDog(\'' + selectedCustomerId + '\',\'' + d.name.replace(/'/g,"\\'") + '\')">'
+      + '<span>🐶 <strong>' + d.name + '</strong> ' + (d.breed||'') + ' ' + (d.gender||'') + ' ' + (d.weight||'') + 'kg</span>'
+      + '<span class="dogs">' + (d.birthday?'🎂'+d.birthday:'') + '</span></div>';
+  });
+  suggestBox.innerHTML = html;
+  suggestBox.classList.add('show');
+}
+
+// 全局搜索狗狗 - 输入狗名时匹配所有客户的狗狗
+function onDogNameInput() {
+  var val = $('bkDogName').value.trim().toLowerCase();
+  var suggestBox = $('bkDogSuggest');
+  if (!val || val.length < 1) {
+    // 如果已匹配客户且输入为空，显示该客户的狗狗
+    if (selectedCustomerId) { showDogSuggest(); return; }
+    suggestBox.classList.remove('show'); return;
+  }
+  // 全局搜索：在所有客户的所有狗狗中匹配
+  var results = [];
+  DB.customers.forEach(function(c) {
+    (c.dogs||[]).forEach(function(d) {
+      if ((d.name||'').toLowerCase().includes(val) || (d.breed||'').toLowerCase().includes(val)) {
+        results.push({ customer: c, dog: d });
+      }
+    });
+  });
+  if (results.length === 0) { suggestBox.classList.remove('show'); return; }
+  results = results.slice(0, 8);
+  var html = '';
+  results.forEach(function(r) {
+    html += '<div class="item" onclick="selectGlobalDog(\'' + r.customer.id + '\',\'' + r.dog.name.replace(/'/g,"\\'") + '\')">'
+      + '<span>🐶 <strong>' + r.dog.name + '</strong> ' + (r.dog.breed||'') + ' ' + (r.dog.gender||'') + ' ' + (r.dog.weight||'') + 'kg</span>'
+      + '<span class="dogs">👤' + r.customer.ownerName + ' ' + r.customer.phone + '</span></div>';
+  });
+  suggestBox.innerHTML = html;
+  suggestBox.classList.add('show');
+}
+
+// 全局选狗：同时填狗信息和主人信息
+function selectGlobalDog(cid, dogName) {
+  var c = DB.customers.find(function(x){return x.id===cid;});
+  if (!c) return;
+  var dog = (c.dogs||[]).find(function(d){return d.name === dogName;});
+  if (!dog) return;
+  // 填主人信息
+  selectedCustomerId = cid;
+  $('bkOwner').value = c.ownerName;
+  $('bkPhone').value = c.phone;
+  $('bkIdCard').value = c.idCard || '';
+  // 填狗信息
+  $('bkDogName').value = dog.name;
+  $('bkBreed').value = dog.breed || '';
+  $('bkWeight').value = dog.weight || '';
+  $('bkGender').value = dog.gender || '';
+  $('bkBirthday').value = dog.birthday || '';
+  $('bkDogSuggest').classList.remove('show');
+  showToast('已匹配：' + c.ownerName + ' · ' + dog.name);
+}
+
+// 选中狗狗，自动填充所有信息
+function selectDog(cid, dogName) {
+  var c = DB.customers.find(function(x){return x.id===cid;});
+  if (!c) return;
+  var dog = (c.dogs||[]).find(function(d){return d.name === dogName;});
+  if (!dog) return;
+  $('bkDogName').value = dog.name;
+  $('bkBreed').value = dog.breed || '';
+  $('bkWeight').value = dog.weight || '';
+  $('bkGender').value = dog.gender || '';
+  $('bkBirthday').value = dog.birthday || '';
+  $('bkDogSuggest').classList.remove('show');
+  showToast('已选择：' + dog.name);
+}
+
+// 点击页面其他地方关闭建议框
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#bkOwner') && !e.target.closest('#bkOwnerSuggest')) {
+    var box = document.getElementById('bkOwnerSuggest');
+    if (box) box.classList.remove('show');
+  }
+  if (!e.target.closest('#bkPhone') && !e.target.closest('#bkPhoneSuggest')) {
+    var box2 = document.getElementById('bkPhoneSuggest');
+    if (box2) box2.classList.remove('show');
+  }
+  if (!e.target.closest('#bkDogName') && !e.target.closest('#bkDogSuggest')) {
+    var box3 = document.getElementById('bkDogSuggest');
+    if (box3) box3.classList.remove('show');
+  }
+});
+
+function saveBooking() {
+  var roomId = $('bkRoom').value;
+  var owner = $('bkOwner').value.trim();
+  var phone = $('bkPhone').value.trim();
+  var dogName = $('bkDogName').value.trim();
+  var checkIn = $('bkCheckIn').value;
+  var checkOut = $('bkCheckOut').value;
+  var isLongTerm = $('bkLongTerm').checked;
+  if (!roomId) { showToast('请选择房间'); return; }
+  if (!owner) { showToast('请填写主人姓名'); return; }
+  if (!phone) { showToast('请填写电话'); return; }
+  if (!dogName) { showToast('请填写狗名'); return; }
+  if (!checkIn) { showToast('请选择入住日期'); return; }
+  if (!isLongTerm) {
+    if (!checkOut) { showToast('请选择退房日期或勾选长期寄养'); return; }
+    if (new Date(checkOut) <= new Date(checkIn)) { showToast('退房需晚于入住'); return; }
+  }
+  var room = DB.rooms[roomId];
+  if (room.status !== 'free') { showToast('房间已占用'); return; }
+  var breed = $('bkBreed').value.trim();
+  var weight = $('bkWeight').value;
+  var gender = $('bkGender').value;
+  var birthday = $('bkBirthday').value;
+  var idCard = $('bkIdCard').value.trim();
+  var order = {
+    id: genId(), roomId: roomId, area: room.area, subArea: room.subArea, roomType: room.type, roomLabel: room.label,
+    ownerName: owner, phone: phone, idCard: idCard, dogName: dogName, breed: breed, weight: weight, gender: gender, birthday: birthday,
+    checkIn: checkIn, expectedCheckOut: checkOut, checkOut: null, actualCheckIn: null, status: 'booked',
+    notes: $('bkNotes').value.trim(), createdAt: now(), days: 0, roomFee: 0, extraFee: 0, extraFeeDesc: '', totalFee: 0, paidAmount: 0,
+    orderType: $('bkOrderType').value, isOwnDog: $('bkOwnDog').checked, isLongTerm: isLongTerm,
+    trainingItems: $('bkOrderType').value === 'training' ? ($('bkTrainingItems') ? $('bkTrainingItems').value.trim() : '') : '',
+    bathFee: $('bkBath').checked ? (parseFloat($('bkBathFee').value)||0) : 0,
+    groomingFee: $('bkGrooming').checked ? (parseFloat($('bkGroomingFee').value)||0) : 0,
+    dogCount: parseInt($('bkDogCount').value)||1,
+    dogFoodFee: 0, freshFoodFee: 0,
+    isMonthly: false, isYearly: false,
+    bathGroomer: '', groomingGroomer: '',
+    needCityPickup: $('bkNeedCityPickup').checked,
+    cityPickupDir: $('bkNeedCityPickup').checked ? $('bkCityPickupDir').value : '',
+    cityPickupAddr: $('bkNeedCityPickup').checked ? ($('bkCityPickupAddr')?$('bkCityPickupAddr').value.trim():'') : '',
+    cityPickupFee: 0,
+    needAirportPickup: $('bkNeedAirportPickup').checked,
+    airportPickupDir: $('bkNeedAirportPickup').checked ? $('bkAirportPickupDir').value : '',
+    airportPickupTime: $('bkNeedAirportPickup').checked ? ($('bkAirportPickupTime')?$('bkAirportPickupTime').value:'') : '',
+    airportPickupFee: 0,
+    pickupFee: 0, pickupDetail: ''
+  };
+  DB.orders.push(order);
+  room.status = 'booked'; room.orderId = order.id;
+  // 自动创建/更新客户档案
+  autoCreateCustomer(order);
+  saveDB();
+  closeModal('modalBooking');
+  renderRoomBoard(); renderOrders();
+  showToast('预订成功！' + roomId + ' · ' + dogName);
+}
+
+function autoCreateCustomer(order) {
+  var existing = DB.customers.find(function(c) { return c.phone === order.phone; });
+  if (existing) {
+    var dogExists = existing.dogs && existing.dogs.find(function(d) { return d.name === order.dogName; });
+    if (!dogExists) {
+      existing.dogs = existing.dogs || [];
+      existing.dogs.push({ id: genId(), name: order.dogName, breed: order.breed||'', weight: order.weight||'', gender: order.gender||'', birthday: order.birthday||'' });
+    } else {
+      // 更新已有狗狗信息（品种、体重等可能变化）
+      if (order.breed) dogExists.breed = order.breed;
+      if (order.weight) dogExists.weight = order.weight;
+      if (order.gender) dogExists.gender = order.gender;
+      if (order.birthday) dogExists.birthday = order.birthday;
+    }
+    existing.visitCount = (existing.visitCount||0) + 1;
+    existing.lastVisit = order.checkIn;
+    existing.area = order.area;
+    if (order.idCard) existing.idCard = order.idCard;
+  } else {
+    DB.customers.push({
+      id: genId(), ownerName: order.ownerName, phone: order.phone, idCard: order.idCard||'',
+      dogs: [{ id: genId(), name: order.dogName, breed: order.breed||'', weight: order.weight||'', gender: order.gender||'', birthday: order.birthday||'' }],
+      area: order.area, visitCount: 1, firstVisit: order.checkIn, lastVisit: order.checkIn,
+      notes: '', createdAt: now()
+    });
+  }
+}
+
+function cancelBooking(orderId) {
+  showConfirm('取消预订', '确定取消？房间将释放。', function() {
+    var order = DB.orders.find(function(o){return o.id===orderId;});
+    if (order) {
+      order.status = 'cancelled';
+      if (order.roomId && DB.rooms[order.roomId]) { DB.rooms[order.roomId].status='free'; DB.rooms[order.roomId].orderId=null; }
+      saveDB(); closeModal('modalRoom'); renderRoomBoard(); renderOrders(); showToast('已取消');
+    }
+  });
+}
+
+function checkIn(orderId) {
+  showConfirm('办理入住', '确认现在办理入住？', function() {
+    var order = DB.orders.find(function(o){return o.id===orderId;});
+    if (order) {
+      order.status='checked-in'; order.actualCheckIn=today();
+      if (order.roomId && DB.rooms[order.roomId]) DB.rooms[order.roomId].status='occupied';
+      saveDB(); closeModal('modalRoom'); renderRoomBoard(); renderOrders(); showToast('入住成功！');
+    }
+  }, '✅');
+}
+
+// ==================== 退房结算 ====================
+let currentCheckoutOrderId = null;
+function openCheckout(orderId) {
+  var order = DB.orders.find(function(o){return o.id===orderId;});
+  if (!order) return;
+  var room = DB.rooms[order.roomId];
+  var checkOutDate = today();
+  var days = daysBetween(order.actualCheckIn||order.checkIn, checkOutDate);
+  var area = order.area || 'big';
+  var dogCount = order.dogCount || 1;
+  
+  // 计算房费（含折扣、假日、包月包年）
+  var isHol = isHoliday(checkOutDate);
+  var dailyPrice = getRoomPrice(room, checkOutDate);
+  var discount = isHol ? 1.0 : getDiscount(days, area);
+  var discountedDaily = Math.round(dailyPrice * discount);
+  var monthlyDaily = getMonthlyPrice(room.type) / 30;
+  if (monthlyDaily > 0 && discountedDaily < monthlyDaily) discountedDaily = Math.round(monthlyDaily);
+  var baseRoomFee = discountedDaily * days;
+  var dogExtraFee = calcDogExtraFee(dogCount, days, area);
+  var showRoomFee = baseRoomFee + dogExtraFee;
+  
+  currentCheckoutOrderId = orderId;
+  var initBathFee = order.bathFee || 0;
+  var initGroomingFee = order.groomingFee || 0;
+  var bathChecked = initBathFee > 0;
+  var groomingChecked = initGroomingFee > 0;
+  var initDogFoodFee = order.dogFoodFee || 0;
+  var initFreshFoodFee = order.freshFoodFee || 0;
+  var dogFoodChecked = initDogFoodFee > 0;
+  var freshFoodChecked = initFreshFoodFee > 0;
+  
+  // 美容师下拉
+  var groomerHtml = '<option value="">无</option>';
+  (DB.staff||[]).forEach(function(s) { if (s.active !== false) groomerHtml += '<option value="' + s.name + '"' + (order.bathGroomer===s.name||order.groomingGroomer===s.name?' selected':'') + '>' + s.name + '</option>'; });
+  groomerHtml += '<option value="__other__">其他（手动填）</option>';
+  
+  // 包月/包年状态
+  var isMonthly = order.isMonthly === true;
+  var isYearly = order.isYearly === true;
+  
+  // 计算接送费
+  var pickupResult = calcPickupFee(order, days);
+  var initPickupFee = pickupResult.total;
+  
+  $('checkoutBody').innerHTML = '<div class="alert alert-info"><strong>📋 退房结算</strong><br>' + order.dogName + ' · ' + order.ownerName + ' · 房间 ' + order.roomId + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">'
+    + '<div><strong>入住：</strong>' + formatDate(order.actualCheckIn||order.checkIn) + '</div>'
+    + '<div><strong>退房：</strong>' + formatDate(checkOutDate) + '</div>'
+    + '<div><strong>天数：</strong>' + days + '天</div>'
+    + '<div><strong>单价：</strong>¥' + dailyPrice + '/天' + (isHol?' 🔥假日':'') + (discount<1?' ×'+(discount*100)+'%':'') + '</div></div>'
+    + '<div class="form-row"><div class="form-group"><label>狗狗数量</label><input type="number" id="ckDogCount" value="' + dogCount + '" min="1" oninput="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')"></div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="ckMonthly" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto"' + (isMonthly?' checked':'') + '>包月 ¥' + getMonthlyPrice(room.type) + '</label><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="ckYearly" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto"' + (isYearly?' checked':'') + '>包年 ¥' + getYearlyPrice(room.type) + '</label></div></div>'
+    + '<div class="form-group"><label>寄养房费（' + days + '天）</label><input type="number" id="ckRoomFee" value="' + showRoomFee + '" readonly></div>'
+    + '<div class="alert alert-info" style="font-size:13px" id="ckPriceDetail">'
+    + (isHol?'🔥 假日价 ¥'+dailyPrice+'/天 | ':'') + (discount<1?'折扣 '+(discount*100)+'% → ¥'+discountedDaily+'/天 | ':'')
+    + '房费 ¥' + baseRoomFee + (dogCount>1?' | 多狗费 ¥'+dogExtraFee+'（'+(dogCount-1)+'只×¥'+getDogRate(area)+'/天×'+days+'天）':'')
+    + '</div>'
+    + (order.needCityPickup || order.needAirportPickup ? '<div class="form-group"><label>🚗 接送费</label><input type="number" id="ckPickupFee" value="' + initPickupFee + '" readonly><div style="font-size:12px;color:var(--gray)" id="ckPickupDetail">' + pickupResult.detail + '</div></div>' : '')
+    + '<div class="form-group"><label>额外费用</label><input type="number" id="ckExtraFee" value="0" oninput="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')"></div>'
+    + '<div class="form-group"><label>额外费用说明</label><input type="text" id="ckExtraDesc" placeholder="如：其他服务费"></div>'
+    + '<div class="form-row"><div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="ckBath" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto;margin-right:6px"' + (bathChecked?' checked':'') + '>🛁 洗澡</label><input type="number" id="ckBathFee" value="' + initBathFee + '" oninput="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')"' + (bathChecked?'':' disabled') + '></div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="ckGrooming" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto;margin-right:6px"' + (groomingChecked?' checked':'') + '>✂️ 美容</label><input type="number" id="ckGroomingFee" value="' + initGroomingFee + '" oninput="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')"' + (groomingChecked?'':' disabled') + '></div></div>'
+    + '<div class="form-group"><label>💇 美容师</label><select id="ckGroomer" onchange="if(this.value===\'__other__\'){var n=prompt(\'请输入美容师名字：\');if(n){var o=document.createElement(\'option\');o.value=n;o.text=n;o.selected=true;this.insertBefore(o,this.lastChild);}}">' + groomerHtml + '</select></div>'
+    + '<div class="form-row"><div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="ckDogFood" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto;margin-right:6px"' + (dogFoodChecked?' checked':'') + '>🦴 狗粮</label><input type="number" id="ckDogFoodFee" value="' + initDogFoodFee + '" oninput="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')"' + (dogFoodChecked?'':' disabled') + '></div>'
+    + '<div class="form-group"><label style="display:flex;align-items:center"><input type="checkbox" id="ckFreshFood" onchange="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')" style="width:auto;margin-right:6px"' + (freshFoodChecked?' checked':'') + '>🥩 鲜食</label><input type="number" id="ckFreshFoodFee" value="' + initFreshFoodFee + '" oninput="updateCheckoutTotal(' + days + ',' + dailyPrice + ',' + discountedDaily + ',' + area + ')"' + (freshFoodChecked?'':' disabled') + '></div></div>'
+    + '<div class="alert alert-success" style="font-size:18px"><strong>应付总额：¥<span id="ckTotal">' + (showRoomFee + initBathFee + initGroomingFee + initDogFoodFee + initFreshFoodFee + initPickupFee) + '</span></strong></div>'
+    + '<div class="form-group"><label>实收金额</label><input type="number" id="ckPaid" value="' + (showRoomFee + initBathFee + initGroomingFee + initDogFoodFee + initFreshFoodFee + initPickupFee) + '"></div>';
+  $('modalCheckout').classList.add('show');
+  closeModal('modalRoom');
+}
+
+function updateCheckoutTotal(days, dailyPrice, discountedDaily, area) {
+  var isMonthly = $('ckMonthly').checked;
+  var isYearly = $('ckYearly').checked;
+  var roomType = '';
+  var order = DB.orders.find(function(o){return o.id===currentCheckoutOrderId;});
+  if (order && DB.rooms[order.roomId]) roomType = DB.rooms[order.roomId].type;
+  
+  var roomFee;
+  if (isYearly) {
+    roomFee = getYearlyPrice(roomType);
+    $('ckPriceDetail').innerHTML = '📦 包年价 ¥' + roomFee;
+  } else if (isMonthly) {
+    roomFee = getMonthlyPrice(roomType);
+    $('ckPriceDetail').innerHTML = '📦 包月价 ¥' + roomFee;
+  } else {
+    var dogCount = parseInt($('ckDogCount').value)||1;
+    var baseRoomFee = discountedDaily * days;
+    var dogExtraFee = calcDogExtraFee(dogCount, days, area);
+    roomFee = baseRoomFee + dogExtraFee;
+    var isHol = isHoliday(today());
+    $('ckPriceDetail').innerHTML = (isHol?'🔥 假日价 ¥'+dailyPrice+'/天 | ':'')
+      + ((discountedDaily < dailyPrice) ? '折扣 → ¥'+discountedDaily+'/天 | ' : '')
+      + '房费 ¥' + baseRoomFee + (dogCount>1?' | 多狗费 ¥'+dogExtraFee:'');
+  }
+  $('ckRoomFee').value = roomFee;
+  
+  var extra = parseFloat($('ckExtraFee').value)||0;
+  var bathFee = $('ckBath').checked ? (parseFloat($('ckBathFee').value)||0) : 0;
+  var groomingFee = $('ckGrooming').checked ? (parseFloat($('ckGroomingFee').value)||0) : 0;
+  var dogFoodFee = $('ckDogFood').checked ? (parseFloat($('ckDogFoodFee').value)||0) : 0;
+  var freshFoodFee = $('ckFreshFood').checked ? (parseFloat($('ckFreshFoodFee').value)||0) : 0;
+  
+  // 勾选/取消切换
+  $('ckBathFee').disabled = !$('ckBath').checked;
+  if (!$('ckBath').checked) $('ckBathFee').value = 0;
+  $('ckGroomingFee').disabled = !$('ckGrooming').checked;
+  if (!$('ckGrooming').checked) $('ckGroomingFee').value = 0;
+  $('ckDogFoodFee').disabled = !$('ckDogFood').checked;
+  if (!$('ckDogFood').checked) $('ckDogFoodFee').value = 0;
+  $('ckFreshFoodFee').disabled = !$('ckFreshFood').checked;
+  if (!$('ckFreshFood').checked) $('ckFreshFoodFee').value = 0;
+  
+  var total = roomFee + extra + bathFee + groomingFee + dogFoodFee + freshFoodFee + (parseFloat($('ckPickupFee')?$('ckPickupFee').value:0)||0);
+  $('ckTotal').textContent = total;
+  $('ckPaid').value = total;
+}
+
+function confirmCheckout() {
+  var order = DB.orders.find(function(o){return o.id===currentCheckoutOrderId;});
+  if (!order) return;
+  var room = DB.rooms[order.roomId];
+  var days = daysBetween(order.actualCheckIn||order.checkIn, today());
+  var area = order.area || 'big';
+  var isMonthly = $('ckMonthly').checked;
+  var isYearly = $('ckYearly').checked;
+  var roomFee = parseFloat($('ckRoomFee').value)||0;
+  var extraFee = parseFloat($('ckExtraFee').value)||0;
+  var bathFee = $('ckBath').checked ? (parseFloat($('ckBathFee').value)||0) : 0;
+  var groomingFee = $('ckGrooming').checked ? (parseFloat($('ckGroomingFee').value)||0) : 0;
+  var dogFoodFee = $('ckDogFood').checked ? (parseFloat($('ckDogFoodFee').value)||0) : 0;
+  var freshFoodFee = $('ckFreshFood').checked ? (parseFloat($('ckFreshFoodFee').value)||0) : 0;
+  var pickupFee = (order.needCityPickup || order.needAirportPickup) ? (parseFloat($('ckPickupFee')?$('ckPickupFee').value:0)||0) : 0;
+  var groomerName = $('ckGroomer').value === '__other__' ? '' : $('ckGroomer').value;
+  var totalFee = roomFee + extraFee + bathFee + groomingFee + dogFoodFee + freshFoodFee + pickupFee;
+  var paidAmount = parseFloat($('ckPaid').value)||0;
+  order.checkOut=today(); order.days=days; order.roomFee=roomFee; order.extraFee=extraFee;
+  order.bathFee=bathFee; order.groomingFee=groomingFee; order.dogFoodFee=dogFoodFee; order.freshFoodFee=freshFoodFee;
+  order.bathGroomer=bathFee>0?groomerName:''; order.groomingGroomer=groomingFee>0?groomerName:'';
+  order.isMonthly=isMonthly; order.isYearly=isYearly;
+  order.cityPickupFee = (order.needCityPickup ? (calcPickupFee(order, days).cityFee) : 0);
+  order.airportPickupFee = (order.needAirportPickup ? (calcPickupFee(order, days).airportFee) : 0);
+  order.pickupFee = pickupFee;
+  order.pickupDetail = $('ckPickupDetail') ? $('ckPickupDetail').innerText : '';
+  order.extraFeeDesc=$('ckExtraDesc').value.trim(); order.totalFee=totalFee; order.paidAmount=paidAmount; order.status='checked-out';
+  if (room) { room.status='free'; room.orderId=null; }
+  saveDB(); closeModal('modalCheckout'); renderRoomBoard(); renderOrders();
+  showToast('退房成功！房费¥' + roomFee + (pickupFee>0?' 接送¥'+pickupFee:'') + (bathFee>0?' 洗澡¥'+bathFee:'') + (groomingFee>0?' 美容¥'+groomingFee:'') + (dogFoodFee>0?' 狗粮¥'+dogFoodFee:'') + (freshFoodFee>0?' 鲜食¥'+freshFoodFee:'') + ' 应收¥' + totalFee + ' 实收¥' + paidAmount);
+}
+
+// ==================== 订单列表 ====================
+function renderOrders() {
+  var fStatus = $('orderFilterStatus').value;
+  var fArea = $('orderFilterArea').value;
+  var search = $('orderSearch').value.trim().toLowerCase();
+  var orders = DB.orders.slice().sort(function(a,b){return (b.createdAt||'').localeCompare(a.createdAt||'');});
+  if (fStatus) orders = orders.filter(function(o){return o.status===fStatus;});
+  if (fArea) orders = orders.filter(function(o){return o.area===fArea;});
+  if (search) {
+    orders = orders.filter(function(o) {
+      return (o.ownerName||'').toLowerCase().includes(search) || (o.dogName||'').toLowerCase().includes(search) || (o.phone||'').toLowerCase().includes(search) || (o.roomId||'').toLowerCase().includes(search);
+    });
+  }
+  if (orders.length === 0) { $('ordersTable').innerHTML = '<div class="empty-state"><div class="icon">📭</div><div class="text">暂无订单</div></div>'; return; }
+  var sm = {'booked':['已预订','badge-warning'],'checked-in':['入住中','badge-danger'],'checked-out':['已退房','badge-success'],'cancelled':['已取消','badge-gray']};
+  var html = '<table><thead><tr><th>时间</th><th>房间</th><th>主人</th><th>狗狗</th><th>类型</th><th>入住</th><th>退房</th><th>天数</th><th>金额</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+  orders.forEach(function(o) {
+    var s = sm[o.status]||['未知','badge-gray'];
+    var days = o.days || (o.checkIn && o.expectedCheckOut ? daysBetween(o.checkIn, o.expectedCheckOut) : '-');
+    if (o.isLongTerm && o.status !== 'checked-out') {
+      days = daysBetween(o.actualCheckIn||o.checkIn, today());
+    }
+    var amount = o.totalFee ? '¥'+o.totalFee : (typeof days==='number' ? '约¥'+(days*(DB.prices[o.roomType]||0)) : '-');
+    var typeLabel = o.orderType === 'training' ? '🎓训练' : '寄养';
+    var ownBadge = o.isOwnDog ? ' 🏠' : '';
+    var checkOutStr = o.isLongTerm ? '长期' : formatDate(o.checkOut||o.expectedCheckOut);
+    html += '<tr><td style="font-size:12px">'+(o.createdAt?o.createdAt.split(' ')[0]:'-')+'</td><td><strong>'+(o.roomId||'-')+'</strong></td><td>'+o.ownerName+'</td><td>🐶 '+o.dogName+'<br><span style="font-size:12px;color:var(--gray)">'+(o.breed||'')+'</span></td><td>'+typeLabel+ownBadge+'</td><td>'+formatDate(o.checkIn)+'</td><td>'+checkOutStr+'</td><td>'+days+'</td><td>'+amount+'</td><td><span class="badge '+s[1]+'">'+s[0]+'</span></td><td>';
+    if (o.status==='booked') html += '<button class="btn btn-success btn-sm edit-only" onclick="checkIn(\''+o.id+'\');renderOrders()">入住</button> <button class="btn btn-outline btn-sm edit-only" onclick="cancelBooking(\''+o.id+'\')">取消</button>';
+    else if (o.status==='checked-in') html += '<button class="btn btn-warning btn-sm edit-only" onclick="openCheckout(\''+o.id+'\')">退房</button>';
+    else html += '<button class="btn btn-outline btn-sm" onclick="viewOrder(\''+o.id+'\')">详情</button>';
+    html += '</td></tr>';
+  });
+  html += '</tbody></table>';
+  $('ordersTable').innerHTML = html;
+}
+
+function viewOrder(orderId) {
+  var o = DB.orders.find(function(x){return x.id===orderId;});
+  if (!o) return;
+  var room = DB.rooms[o.roomId];
+  var price = room ? getRoomPrice(room) : 0;
+  var html = '<div class="alert alert-info"><strong>📋 订单详情</strong></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">';
+  html += '<div><strong>订单号：</strong>'+o.id+'</div><div><strong>创建：</strong>'+(o.createdAt||'-')+'</div>';
+  html += '<div><strong>房间：</strong>'+(o.roomId||'-')+'</div><div><strong>房型：</strong>'+(o.roomLabel||'-')+'</div>';
+  html += '<div><strong>主人：</strong>'+o.ownerName+'</div><div><strong>电话：</strong>'+o.phone+'</div>';
+  html += '<div><strong>身份证：</strong>'+(o.idCard||'-')+'</div><div><strong>狗名：</strong>🐶 '+o.dogName+'</div>';
+  html += '<div><strong>体重：</strong>'+(o.weight||'-')+'kg</div><div><strong>单价：</strong>¥'+price+'/天</div>';
+  html += '<div><strong>入住：</strong>'+formatDate(o.checkIn)+'</div><div><strong>实际入住：</strong>'+formatDate(o.actualCheckIn)+'</div>';
+  html += '<div><strong>退房：</strong>'+(o.isLongTerm?'长期寄养':formatDate(o.checkOut))+'</div><div><strong>天数：</strong>'+(o.days||'-')+'天</div>';
+  html += '<div><strong>类型：</strong>'+(o.orderType==='training'?'🎓训练':'寄养')+(o.isOwnDog?' 🏠自家狗':'')+'</div><div><strong>长期：</strong>'+(o.isLongTerm?'是':'否')+'</div></div>';
+  if (o.orderType==='training' && o.trainingItems) html += '<div class="alert alert-info"><strong>🎓 训练项目：</strong>'+o.trainingItems+'</div>';
+  if (o.status==='checked-out') html += '<div class="alert alert-success"><strong>💰 结算</strong><br>房费：¥'+(o.roomFee||0)+' | 额外：¥'+(o.extraFee||0)+' '+(o.extraFeeDesc?'('+o.extraFeeDesc+')':'')+'<br>洗澡：¥'+(o.bathFee||0)+' | 美容：¥'+(o.groomingFee||0)+'<br>应收：¥'+(o.totalFee||0)+' | 实收：¥'+(o.paidAmount||0)+'</div>';
+  if (o.notes) html += '<div class="alert alert-warning"><strong>备注：</strong>'+o.notes+'</div>';
+  $('modalRoomTitle').textContent = '订单详情';
+  $('modalRoomBody').innerHTML = html;
+  $('modalRoomFooter').innerHTML = '<button class="btn btn-outline" onclick="closeModal(\'modalRoom\')">关闭</button>';
+  $('modalRoom').classList.add('show');
+}
+
+// ==================== 数据看板 ====================
+function renderDashboard() {
+  var smallR = getRoomsByArea('small');
+  var bigR = getRoomsByArea('big');
+  var allR = smallR.concat(bigR);
+  function cs(rooms) { var f=0,b=0,o=0,m=0,own=0; rooms.forEach(function(r){if(r.status==='free')f++;else if(r.status==='booked')b++;else if(r.status==='occupied'){if(isOwnDogRoom(r)){own++;}else{o++;}}else if(r.status==='maintenance')m++;}); return {free:f,booked:b,occupied:o,maint:m,ownDog:own,total:rooms.length}; }
+  // 大狗区分子区
+  var bigAreas = {};
+  bigR.forEach(function(r) {
+    var key = r.subArea || 'other';
+    if (!bigAreas[key]) bigAreas[key] = [];
+    bigAreas[key].push(r);
+  });
+  var bigSubStats = '';
+  Object.keys(bigAreas).forEach(function(k) {
+    var s = cs(bigAreas[k]);
+    bigSubStats += s.occupied + '/' + s.total + ' ';
+  });
+
+  var sc = cs(smallR), bc = cs(bigR), tc = cs(allR);
+  // 环形图
+  var ringHtml = '';
+  ringHtml += makeRing('ringBig', bc.occupied, bc.total, '大狗区', 'var(--primary)');
+  ringHtml += makeRing('ringSmall', sc.occupied, sc.total, '小狗区', 'var(--warning)');
+  ringHtml += makeRing('ringTotal', tc.occupied, tc.total, '总入住率', 'var(--success)');
+  ringHtml += makeRing('ringAvail', tc.free, tc.total, '空闲率', '#8E44AD');
+  $('occRow').innerHTML = ringHtml;
+
+  // 统计
+  var todayStr = today();
+  var todayIn = DB.orders.filter(function(o){return o.checkIn===todayStr;}).length;
+  var todayOut = DB.orders.filter(function(o){return o.checkOut===todayStr;}).length;
+  var todayRev = DB.orders.filter(function(o){return o.checkOut===todayStr;}).reduce(function(s,o){return s+(o.paidAmount||0);},0);
+  var nowD = new Date();
+  var thisMonth = nowD.getMonth(); var thisYear = nowD.getFullYear();
+  function isThisMonth(dStr) { if(!dStr)return false; var d=new Date(dStr); return d.getMonth()===thisMonth&&d.getFullYear()===thisYear; }
+  function isThisYear(dStr) { if(!dStr)return false; var d=new Date(dStr); return d.getFullYear()===thisYear; }
+  var checkedOutThisMonth = DB.orders.filter(function(o){return o.status==='checked-out' && isThisMonth(o.checkOut);});
+  var checkedOutThisYear = DB.orders.filter(function(o){return o.status==='checked-out' && isThisYear(o.checkOut);});
+  var monthBoarding = checkedOutThisMonth.filter(function(o){return o.orderType!=='training';}).reduce(function(s,o){return s+(o.paidAmount||0);},0);
+  var monthTraining = checkedOutThisMonth.filter(function(o){return o.orderType==='training';}).reduce(function(s,o){return s+(o.paidAmount||0);},0);
+  var monthBathGroom = checkedOutThisMonth.reduce(function(s,o){return s+(o.bathFee||0)+(o.groomingFee||0);},0);
+  var monthFood = checkedOutThisMonth.reduce(function(s,o){return s+(o.dogFoodFee||0)+(o.freshFoodFee||0);},0);
+  var monthRev = checkedOutThisMonth.reduce(function(s,o){return s+(o.paidAmount||0);},0);
+  var yearRev = checkedOutThisYear.reduce(function(s,o){return s+(o.paidAmount||0);},0);
+
+  $('dashStats').innerHTML = ''
+    + '<div class="stat-card"><div class="icon-box" style="background:#E3F2FD;color:var(--primary)">📋</div><div class="info"><div class="label">今日入住</div><div class="value">'+todayIn+'</div><div class="sub">今日退房 '+todayOut+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFEBEE;color:var(--danger)">🏠</div><div class="info"><div class="label">在住总数</div><div class="value">'+tc.occupied+'</div><div class="sub">大狗'+bc.occupied+' · 小狗'+sc.occupied + (tc.ownDog>0?' · 自家'+tc.ownDog:'') + '</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#E8F8E8;color:var(--success)">💰</div><div class="info"><div class="label">本月收入</div><div class="value">¥'+monthRev+'</div><div class="sub">年累计 ¥'+yearRev+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFF8E1;color:var(--warning)">📊</div><div class="info"><div class="label">总入住率</div><div class="value">'+(tc.total?Math.round(tc.occupied/tc.total*100):0)+'%</div><div class="sub">空闲 '+tc.free+'间</div></div></div>';
+
+  // 收入分类统计
+  $('dashStats').innerHTML += ''
+    + '<div class="stat-card"><div class="icon-box" style="background:#E8F5E9;color:#2E7D32">🏠</div><div class="info"><div class="label">本月寄养收入</div><div class="value">¥'+monthBoarding+'</div><div class="sub">含训练 ¥'+monthTraining+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FCE4EC;color:#C62828">💇</div><div class="info"><div class="label">本月洗美收入</div><div class="value">¥'+monthBathGroom+'</div><div class="sub">提成30% ≈ ¥'+Math.round(monthBathGroom*0.3)+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFF3E0;color:#E65100">🦴</div><div class="info"><div class="label">本月狗粮鲜食</div><div class="value">¥'+monthFood+'</div><div class="sub">&nbsp;</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#EDE7F6;color:#4527A0">📅</div><div class="info"><div class="label">年累计收入</div><div class="value">¥'+yearRev+'</div><div class="sub">&nbsp;</div></div></div>';
+
+  // 美容师提成统计
+  if (DB.staff && DB.staff.length > 0) {
+    var groomerStats = {};
+    DB.staff.forEach(function(s) { groomerStats[s.name] = { bath: 0, grooming: 0 }; });
+    checkedOutThisMonth.forEach(function(o) {
+      if (o.bathGroomer && groomerStats[o.bathGroomer]) groomerStats[o.bathGroomer].bath += (o.bathFee||0);
+      if (o.groomingGroomer && groomerStats[o.groomingGroomer]) groomerStats[o.groomingGroomer].grooming += (o.groomingFee||0);
+    });
+    var groomerHtml = '<div class="card"><div class="card-title"><span class="left">💇 本月美容师提成</span></div><table><thead><tr><th>美容师</th><th>洗澡</th><th>美容</th><th>合计</th><th>提成(30%)</th></tr></thead><tbody>';
+    var hasData = false;
+    DB.staff.forEach(function(s) {
+      if (s.active === false) return;
+      var gs = groomerStats[s.name] || {bath:0,grooming:0};
+      var total = gs.bath + gs.grooming;
+      if (total > 0) hasData = true;
+      groomerHtml += '<tr><td><strong>'+s.name+'</strong></td><td>¥'+gs.bath+'</td><td>¥'+gs.grooming+'</td><td>¥'+total+'</td><td style="color:var(--danger);font-weight:700">¥'+Math.round(total*0.3)+'</td></tr>';
+    });
+    groomerHtml += '</tbody></table></div>';
+    if (hasData) $('dashStats').insertAdjacentHTML('afterend', groomerHtml);
+  }
+
+  renderChart();
+  renderBirthdayAlerts();
+  renderFoodAlerts();
+  recordHistory(tc.occupied, tc.total);
+}
+
+function makeRing(id, value, total, title, color) {
+  var pct = total ? Math.round(value/total*100) : 0;
+  var r = 42, c = 2*Math.PI*r, offset = c - (c*pct/100);
+  return '<div class="occ-card"><div class="title">'+title+'</div><div class="ring" id="'+id+'"><svg width="100" height="100"><circle cx="50" cy="50" r="'+r+'" fill="none" stroke="var(--gray-light)" stroke-width="8"/><circle cx="50" cy="50" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="8" stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" stroke-linecap="round" style="transition:stroke-dashoffset .5s"/></svg><div class="pct">'+pct+'%</div></div><div class="detail">入住'+value+'/'+total+'</div></div>';
+}
+
+function renderChart() {
+  var hist = DB.history || [];
+  var html = '';
+  for (var i=6;i>=0;i--) {
+    var d = new Date(); d.setDate(d.getDate()-i);
+    var ds = d.toISOString().split('T')[0];
+    var rec = hist.find(function(h){return h.date===ds;});
+    var rate = rec ? Math.round(rec.occupied/rec.total*100) : 0;
+    var label = (d.getMonth()+1)+'/'+d.getDate();
+    html += '<div class="chart-bar" style="height:'+Math.max(rate,2)+'%" title="'+ds+': '+rate+'%"><div class="val">'+rate+'%</div><div class="label">'+label+'</div></div>';
+  }
+  $('chartBars').innerHTML = html;
+}
+
+function recordHistory(occupied, total) {
+  if (!DB.history) DB.history = [];
+  var ts = today();
+  var rec = DB.history.find(function(h){return h.date===ts;});
+  if (rec) { rec.occupied=occupied; rec.total=total; }
+  else { DB.history.push({date:ts,occupied:occupied,total:total}); if (DB.history.length>30) DB.history=DB.history.slice(-30); }
+  saveDB();
+}
+
+// ==================== 生日提醒 ====================
+function renderBirthdayAlerts() {
+  var nowD = new Date();
+  var nowMonth = nowD.getMonth() + 1;
+  var upcoming = [];
+  DB.customers.forEach(function(c) {
+    (c.dogs||[]).forEach(function(d) {
+      if (d.birthday) {
+        var bd = new Date(d.birthday);
+        var bdMonth = bd.getMonth() + 1;
+        var bdDay = bd.getDate();
+        var nowDay = nowD.getDate();
+        // 当月或下月生日
+        if (bdMonth === nowMonth || (bdMonth === nowMonth+1) || (nowMonth===12 && bdMonth===1)) {
+          var daysToBday;
+          var bdayThisYear = new Date(nowD.getFullYear(), bd.getMonth(), bdDay);
+          if (bdayThisYear < nowD) bdayThisYear = new Date(nowD.getFullYear()+1, bd.getMonth(), bdDay);
+          daysToBday = Math.ceil((bdayThisYear - nowD) / 86400000);
+          if (daysToBday <= 30) {
+            upcoming.push({ customer: c, dog: d, daysToBday: daysToBday, bdate: bdMonth+'/'+bdDay });
+          }
+        }
+      }
+    });
+  });
+  upcoming.sort(function(a,b){return a.daysToBday - b.daysToBday;});
+  if (upcoming.length === 0) {
+    $('birthdayAlerts').innerHTML = '<div class="empty-state"><div class="icon">🎂</div><div class="text">暂无近期生日提醒。请在客户档案中填写狗狗生日获取提醒。</div></div>';
+    return;
+  }
+  var html = '';
+  upcoming.forEach(function(u) {
+    var btxt = u.daysToBday === 0 ? '今天生日！' : (u.daysToBday + '天后生日');
+    html += '<div class="birthday-card"><div class="dog-avatar">🐶</div><div class="info"><div class="name">' + u.dog.name + ' · ' + btxt + '</div><div class="detail">主人：' + u.customer.ownerName + ' · ' + u.customer.phone + ' · 生日：' + u.bdate + '</div></div></div>';
+  });
+  $('birthdayAlerts').innerHTML = html;
+}
+
+// ==================== 狗粮管理 ====================
+function renderFoodPage() { renderFoodStats(); renderFoodGrid(); renderFoodMonthSelect(); renderFoodProfit(); renderFoodRecords(); renderFoodRecordBrandSelect(); }
+function renderFoodStats() {
+  var brands = DB.foodBrands;
+  var totalStock = brands.reduce(function(s,b){return s+(b.stock||0);},0);
+  var totalValue = brands.reduce(function(s,b){return s+(b.stock||0)*(b.cost||0);},0);
+  var lowStock = brands.filter(function(b){return (b.stock||0)<=(b.threshold||5);});
+  var nowD = new Date();
+  var mSale = DB.foodRecords.filter(function(r){if(r.type!=='sale')return false;var d=new Date(r.date);return d.getMonth()===nowD.getMonth()&&d.getFullYear()===nowD.getFullYear();});
+  var mAmount = mSale.reduce(function(s,r){return s+r.qty*r.unitPrice;},0);
+  var mCost = mSale.reduce(function(s,r){var b=brands.find(function(x){return x.id===r.brandId;});return s+(b?r.qty*(b.cost||0):0);},0);
+  var mProfit = mAmount - mCost;
+  $('foodStats').innerHTML = ''
+    + '<div class="stat-card"><div class="icon-box" style="background:#E3F2FD;color:var(--primary)">📦</div><div class="info"><div class="label">总库存</div><div class="value">'+totalStock+'<span style="font-size:14px">袋</span></div><div class="sub">'+brands.length+'品牌 · ¥'+totalValue.toFixed(0)+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFEBEE;color:var(--danger)">⚠️</div><div class="info"><div class="label">库存预警</div><div class="value">'+lowStock.length+'</div><div class="sub">低于阈值</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFF8E1;color:var(--warning)">📤</div><div class="info"><div class="label">本月销售额</div><div class="value">¥'+mAmount.toFixed(0)+'</div><div class="sub">成本¥'+mCost.toFixed(0)+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#E8F8E8;color:var(--success)">💰</div><div class="info"><div class="label">本月毛利</div><div class="value">¥'+mProfit.toFixed(0)+'</div><div class="sub">利润率'+(mAmount?Math.round(mProfit/mAmount*100):0)+'%</div></div></div>';
+}
+function renderFoodGrid() {
+  var brands = DB.foodBrands;
+  if (brands.length===0) { $('foodGrid').innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">🦴</div><div class="text">暂无品牌，请先添加</div></div>'; return; }
+  var html = '';
+  brands.forEach(function(b) {
+    var stock=b.stock||0, thr=b.threshold||5, isLow=stock<=thr, profit=(b.price||0)-(b.cost||0);
+    html += '<div class="food-card '+(isLow?'low-stock':'')+'"><div class="brand-name">'+b.name+'</div><div class="brand-spec">规格：'+b.spec+'kg/袋</div><div class="stock-info"><div class="stock-val">'+stock+'<span style="font-size:14px;font-weight:400">袋</span></div><div class="stock-label">'+(isLow?'⚠️不足':'')+'</div></div><div class="price-info"><span class="cost">进价¥'+(b.cost||0)+'</span><span class="sale">售价¥'+(b.price||0)+'</span></div><div style="font-size:12px;color:var(--gray);margin-bottom:8px">单袋利润¥'+profit.toFixed(0)+' · 库存价值¥'+(stock*(b.cost||0)).toFixed(0)+'</div><div class="actions"><button class="btn btn-success btn-sm" onclick="openFoodPurchase(\''+b.id+'\')">📥进货</button><button class="btn btn-warning btn-sm" onclick="openFoodSale(\''+b.id+'\')">📤销售</button><button class="btn btn-outline btn-sm" onclick="editBrand(\''+b.id+'\')">✏️</button></div></div>';
+  });
+  $('foodGrid').innerHTML = html;
+}
+function renderFoodAlerts() {
+  var low = DB.foodBrands.filter(function(b){return (b.stock||0)<=(b.threshold||5);});
+  if (low.length===0) { $('foodAlerts').innerHTML = '<div class="empty-state"><div class="icon">✅</div><div class="text">暂无预警</div></div>'; return; }
+  var html = '';
+  low.forEach(function(b) { html += '<div class="alert alert-danger"><strong>'+b.name+'</strong>（'+b.spec+'kg）仅剩'+(b.stock||0)+'袋<button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openFoodPurchase(\''+b.id+'\')">进货</button></div>'; });
+  $('foodAlerts').innerHTML = html;
+}
+function openFoodBrand() { renderBrandList(); $('modalFoodBrand').classList.add('show'); }
+function renderBrandList() {
+  var brands = DB.foodBrands;
+  if (brands.length===0) { $('brandList').innerHTML = '<div class="empty-state"><div class="icon">🏷️</div><div class="text">暂无品牌</div></div>'; return; }
+  var html = '<table><thead><tr><th>品牌</th><th>规格</th><th>进价</th><th>售价</th><th>库存</th><th>阈值</th><th>操作</th></tr></thead><tbody>';
+  brands.forEach(function(b) { html += '<tr><td><strong>'+b.name+'</strong></td><td>'+b.spec+'kg</td><td>¥'+(b.cost||0)+'</td><td>¥'+(b.price||0)+'</td><td>'+(b.stock||0)+'袋</td><td>'+(b.threshold||5)+'袋</td><td><button class="btn btn-outline btn-sm" onclick="editBrand(\''+b.id+'\')">编辑</button> <button class="btn btn-danger btn-sm" onclick="deleteBrand(\''+b.id+'\')">删除</button></td></tr>'; });
+  html += '</tbody></table>';
+  $('brandList').innerHTML = html;
+}
+function openBrandForm() { $('brandId').value='';$('brandName').value='';$('brandSpec').value='';$('brandCost').value='';$('brandPrice').value='';$('brandThreshold').value='5';$('brandFormTitle').textContent='添加品牌';$('modalBrandForm').classList.add('show'); }
+function editBrand(id) { var b=DB.foodBrands.find(function(x){return x.id===id;});if(!b)return;$('brandId').value=b.id;$('brandName').value=b.name;$('brandSpec').value=b.spec;$('brandCost').value=b.cost;$('brandPrice').value=b.price;$('brandThreshold').value=b.threshold||5;$('brandFormTitle').textContent='编辑品牌';$('modalBrandForm').classList.add('show'); }
+function saveBrand() {
+  var id=$('brandId').value,name=$('brandName').value.trim(),spec=parseFloat($('brandSpec').value),cost=parseFloat($('brandCost').value),price=parseFloat($('brandPrice').value),threshold=parseInt($('brandThreshold').value)||5;
+  if(!name){showToast('请填品牌名');return;} if(!spec||spec<=0){showToast('请填规格');return;} if(isNaN(cost)||cost<0){showToast('请填进价');return;} if(isNaN(price)||price<0){showToast('请填售价');return;}
+  if(id){var b=DB.foodBrands.find(function(x){return x.id===id;});if(b){b.name=name;b.spec=spec;b.cost=cost;b.price=price;b.threshold=threshold;}}
+  else DB.foodBrands.push({id:genId(),name:name,spec:spec,cost:cost,price:price,threshold:threshold,stock:0,createdAt:now()});
+  saveDB();closeModal('modalBrandForm');renderBrandList();renderFoodGrid();renderFoodAlerts();showToast('品牌已保存');
+}
+function deleteBrand(id) { showConfirm('删除品牌','确定删除？',function(){DB.foodBrands=DB.foodBrands.filter(function(b){return b.id!==id;});saveDB();renderBrandList();renderFoodGrid();renderFoodAlerts();showToast('已删除');}); }
+function openFoodPurchase(brandId) {
+  var brands=DB.foodBrands; if(brands.length===0){showToast('请先添加品牌');openFoodBrand();return;}
+  var html=''; brands.forEach(function(b){html+='<option value="'+b.id+'">'+b.name+'（'+b.spec+'kg）· 库存'+(b.stock||0)+'袋</option>';});
+  $('purchaseBrand').innerHTML=html; if(brandId)$('purchaseBrand').value=brandId;
+  $('purchaseQty').value='';$('purchaseCost').value='';$('purchaseDate').value=today();$('purchaseNotes').value='';
+  $('purchasePreview').style.display='none'; updatePurchaseInfo(); $('modalFoodPurchase').classList.add('show');
+}
+function updatePurchaseInfo() {
+  var brandId=$('purchaseBrand').value; var brand=DB.foodBrands.find(function(b){return b.id===brandId;}); if(!brand)return;
+  if($('purchaseCost').value==='')$('purchaseCost').value=brand.cost||'';
+  var qty=parseInt($('purchaseQty').value)||0,uc=parseFloat($('purchaseCost').value)||0,total=qty*uc;
+  if(qty>0){$('purchasePreview').style.display='block';$('purchasePreview').innerHTML='入库'+qty+'袋×¥'+uc+'=<strong>¥'+total.toFixed(2)+'</strong>，入库后库存'+((brand.stock||0)+qty)+'袋';}
+  else $('purchasePreview').style.display='none';
+}
+function savePurchase() {
+  var brandId=$('purchaseBrand').value,qty=parseInt($('purchaseQty').value),uc=parseFloat($('purchaseCost').value),date=$('purchaseDate').value||today(),notes=$('purchaseNotes').value.trim();
+  if(!brandId){showToast('请选品牌');return;} if(!qty||qty<=0){showToast('请填数量');return;} if(isNaN(uc)||uc<0){showToast('请填单价');return;}
+  var brand=DB.foodBrands.find(function(b){return b.id===brandId;}); if(!brand)return;
+  brand.stock=(brand.stock||0)+qty; brand.cost=uc;
+  DB.foodRecords.push({id:genId(),type:'purchase',brandId:brandId,brandName:brand.name,spec:brand.spec,qty:qty,unitPrice:uc,totalAmount:qty*uc,date:date,notes:notes,createdAt:now()});
+  saveDB();closeModal('modalFoodPurchase');renderFoodPage();renderFoodAlerts();showToast('入库成功！');
+}
+function openFoodSale(brandId) {
+  var brands=DB.foodBrands; if(brands.length===0){showToast('请先添加品牌');return;}
+  var html=''; brands.forEach(function(b){html+='<option value="'+b.id+'">'+b.name+'（'+b.spec+'kg）· 库存'+(b.stock||0)+'袋</option>';});
+  $('saleBrand').innerHTML=html; if(brandId)$('saleBrand').value=brandId;
+  $('saleQty').value='';$('salePrice').value='';$('saleBuyer').value='';$('saleDate').value=today();$('salePreview').style.display='none';
+  updateSaleInfo(); $('modalFoodSale').classList.add('show');
+}
+function updateSaleInfo() {
+  var brandId=$('saleBrand').value; var brand=DB.foodBrands.find(function(b){return b.id===brandId;}); if(!brand)return;
+  if($('salePrice').value==='')$('salePrice').value=brand.price||'';
+  var qty=parseInt($('saleQty').value)||0,up=parseFloat($('salePrice').value)||0,total=qty*up,profit=total-qty*(brand.cost||0);
+  if(qty>0){$('salePreview').style.display='block';if(qty>(brand.stock||0)){$('salePreview').className='alert alert-danger';$('salePreview').innerHTML='⚠️ 库存不足！仅剩'+(brand.stock||0)+'袋';}else{$('salePreview').className='alert alert-info';$('salePreview').innerHTML='销售'+qty+'袋×¥'+up+'=<strong>¥'+total.toFixed(2)+'</strong> 利润¥'+profit.toFixed(2)+' 售后'+((brand.stock||0)-qty)+'袋';}}
+  else $('salePreview').style.display='none';
+}
+function saveSale() {
+  var brandId=$('saleBrand').value,qty=parseInt($('saleQty').value),up=parseFloat($('salePrice').value),buyer=$('saleBuyer').value.trim(),date=$('saleDate').value||today();
+  if(!brandId){showToast('请选品牌');return;} if(!qty||qty<=0){showToast('请填数量');return;} if(isNaN(up)||up<0){showToast('请填单价');return;}
+  var brand=DB.foodBrands.find(function(b){return b.id===brandId;}); if(!brand)return;
+  if(qty>(brand.stock||0)){showToast('库存不足');return;}
+  brand.stock=(brand.stock||0)-qty; brand.price=up;
+  DB.foodRecords.push({id:genId(),type:'sale',brandId:brandId,brandName:brand.name,spec:brand.spec,qty:qty,unitPrice:up,costPrice:brand.cost||0,totalAmount:qty*up,totalCost:qty*(brand.cost||0),profit:qty*(up-(brand.cost||0)),buyer:buyer,date:date,createdAt:now()});
+  saveDB();closeModal('modalFoodSale');renderFoodPage();showToast('销售成功！');
+}
+function renderFoodRecords() {
+  var fT=$('foodRecordType').value,fB=$('foodRecordBrand').value;
+  var records=DB.foodRecords.slice().sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});
+  if(fT)records=records.filter(function(r){return r.type===fT;}); if(fB)records=records.filter(function(r){return r.brandId===fB;});
+  if(records.length===0){$('foodRecordsTable').innerHTML='<div class="empty-state"><div class="icon">📜</div><div class="text">暂无记录</div></div>';return;}
+  var html='<table><thead><tr><th>日期</th><th>类型</th><th>品牌</th><th>规格</th><th>数量</th><th>单价</th><th>总额</th><th>利润</th><th>备注</th></tr></thead><tbody>';
+  records.forEach(function(r){var p=r.type==='purchase';html+='<tr><td>'+r.date+'</td><td>'+(p?'<span class="badge badge-success">进货</span>':'<span class="badge badge-warning">销售</span>')+'</td><td>'+r.brandName+'</td><td>'+r.spec+'kg</td><td>'+r.qty+'袋</td><td>¥'+r.unitPrice+'</td><td>¥'+r.totalAmount.toFixed(0)+'</td><td>'+(p?'-':'¥'+(r.profit||0).toFixed(0))+'</td><td style="font-size:12px">'+(r.notes||r.buyer||'-')+'</td></tr>';});
+  html+='</tbody></table>'; $('foodRecordsTable').innerHTML=html;
+}
+function renderFoodRecordBrandSelect() { var html='<option value="">全部品牌</option>'; DB.foodBrands.forEach(function(b){html+='<option value="'+b.id+'">'+b.name+'</option>';}); $('foodRecordBrand').innerHTML=html; }
+function renderFoodMonthSelect() { var nd=new Date(),html=''; for(var i=0;i<6;i++){var d=new Date(nd.getFullYear(),nd.getMonth()-i,1);var val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');var label=d.getFullYear()+'年'+(d.getMonth()+1)+'月';html+='<option value="'+val+'"'+(i===0?' selected':'')+'>'+label+(i===0?'（本月）':'')+'</option>';} $('foodMonthSelect').innerHTML=html; }
+function renderFoodProfit() {
+  var month=$('foodMonthSelect').value;var parts=month.split('-');var year=parts[0],mon=parseInt(parts[1]);
+  var sales=DB.foodRecords.filter(function(r){if(r.type!=='sale')return false;var d=new Date(r.date);return d.getFullYear()==year&&(d.getMonth()+1)==mon;});
+  var purchases=DB.foodRecords.filter(function(r){if(r.type!=='purchase')return false;var d=new Date(r.date);return d.getFullYear()==year&&(d.getMonth()+1)==mon;});
+  if(sales.length===0&&purchases.length===0){$('foodProfitTable').innerHTML='<div class="empty-state"><div class="icon">📊</div><div class="text">暂无数据</div></div>';return;}
+  var sAmt=sales.reduce(function(s,r){return s+r.totalAmount;},0),sCost=sales.reduce(function(s,r){return s+(r.totalCost||0);},0),sProfit=sAmt-sCost;
+  var pAmt=purchases.reduce(function(s,r){return s+r.totalAmount;},0),sQty=sales.reduce(function(s,r){return s+r.qty;},0),pQty=purchases.reduce(function(s,r){return s+r.qty;},0);
+  var bs={}; sales.forEach(function(r){if(!bs[r.brandName])bs[r.brandName]={qty:0,amount:0,cost:0,profit:0};bs[r.brandName].qty+=r.qty;bs[r.brandName].amount+=r.totalAmount;bs[r.brandName].cost+=(r.totalCost||0);bs[r.brandName].profit+=(r.profit||0);});
+  var html='<div class="stats-grid" style="margin-bottom:16px"><div class="stat-card"><div class="icon-box" style="background:#FFF8E1;color:var(--warning)">📤</div><div class="info"><div class="label">销售总额</div><div class="value">¥'+sAmt.toFixed(0)+'</div><div class="sub">销售'+sQty+'袋</div></div></div><div class="stat-card"><div class="icon-box" style="background:#E8F8E8;color:var(--success)">💰</div><div class="info"><div class="label">毛利润</div><div class="value">¥'+sProfit.toFixed(0)+'</div><div class="sub">利润率'+(sAmt?Math.round(sProfit/sAmt*100):0)+'%</div></div></div><div class="stat-card"><div class="icon-box" style="background:#E3F2FD;color:var(--primary)">📥</div><div class="info"><div class="label">进货总额</div><div class="value">¥'+pAmt.toFixed(0)+'</div><div class="sub">进货'+pQty+'袋</div></div></div></div>';
+  if(Object.keys(bs).length>0){html+='<table><thead><tr><th>品牌</th><th>销售数量</th><th>销售额</th><th>成本</th><th>毛利润</th><th>利润率</th></tr></thead><tbody>';Object.keys(bs).forEach(function(n){var d=bs[n];html+='<tr><td><strong>'+n+'</strong></td><td>'+d.qty+'袋</td><td>¥'+d.amount.toFixed(0)+'</td><td>¥'+d.cost.toFixed(0)+'</td><td style="color:var(--success);font-weight:600">¥'+d.profit.toFixed(0)+'</td><td>'+(d.amount?Math.round(d.profit/d.amount*100):0)+'%</td></tr>';});html+='</tbody></table>';}
+  $('foodProfitTable').innerHTML=html;
+}
+
+// ==================== 客户档案 ====================
+function renderCustomers() {
+  var search = $('custSearch').value.trim().toLowerCase();
+  var fArea = $('custFilterArea').value;
+  var customers = DB.customers.slice().sort(function(a,b){return (b.lastVisit||'').localeCompare(a.lastVisit||'');});
+  if (fArea) customers = customers.filter(function(c){return c.area === fArea;});
+  if (search) {
+    customers = customers.filter(function(c) {
+      if ((c.ownerName||'').toLowerCase().includes(search)) return true;
+      if ((c.phone||'').toLowerCase().includes(search)) return true;
+      return (c.dogs||[]).some(function(d){return (d.name||'').toLowerCase().includes(search);});
+    });
+  }
+  // 统计
+  var totalDogs = DB.customers.reduce(function(s,c){return s + (c.dogs||[]).length;},0);
+  var bigCust = DB.customers.filter(function(c){return c.area==='big';}).length;
+  var smallCust = DB.customers.filter(function(c){return c.area==='small';}).length;
+  var withBday = DB.customers.reduce(function(s,c){return s + (c.dogs||[]).filter(function(d){return d.birthday;}).length;},0);
+  $('custStats').innerHTML = ''
+    + '<div class="stat-card"><div class="icon-box" style="background:#E3F2FD;color:var(--primary)">👤</div><div class="info"><div class="label">客户总数</div><div class="value">'+DB.customers.length+'</div><div class="sub">大狗'+bigCust+' · 小狗'+smallCust+'</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFEBEE;color:var(--danger)">🐶</div><div class="info"><div class="label">狗狗总数</div><div class="value">'+totalDogs+'</div><div class="sub">已记录生日 '+withBday+'只</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#E8F8E8;color:var(--success)">📅</div><div class="info"><div class="label">本月到访</div><div class="value">'+DB.customers.filter(function(c){if(!c.lastVisit)return false;var d=new Date(c.lastVisit);var n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();}).length+'</div><div class="sub">活跃客户</div></div></div>'
+    + '<div class="stat-card"><div class="icon-box" style="background:#FFF8E1;color:var(--warning)">🎂</div><div class="info"><div class="label">本月生日</div><div class="value">'+DB.customers.reduce(function(s,c){return s+(c.dogs||[]).filter(function(d){if(!d.birthday)return false;var bd=new Date(d.birthday);var n=new Date();return bd.getMonth()+1===n.getMonth()+1;}).length;},0)+'</div><div class="sub">需准备礼物</div></div></div>';
+
+  if (customers.length === 0) {
+    $('customerList').innerHTML = '<div class="empty-state"><div class="icon">🐕</div><div class="text">暂无客户档案，点击「添加客户」录入</div></div>';
+    return;
+  }
+  var html = '';
+  customers.forEach(function(c) {
+    var dogHtml = (c.dogs||[]).map(function(d) {
+      var ageStr = d.birthday ? ' · ' + calcAge(d.birthday) : '';
+      return '<span class="badge badge-info" style="margin-right:4px">🐶 ' + d.name + (d.breed?' · '+d.breed:'') + ageStr + '</span>';
+    }).join('');
+    html += '<div class="customer-card"><div class="avatar">👤</div><div class="info"><div class="name">' + c.ownerName + ' <span style="font-size:13px;color:var(--gray)">· ' + c.phone + '</span></div><div class="detail">到访' + (c.visitCount||0) + '次 · 首次' + formatDate(c.firstVisit) + ' · 最近' + formatDate(c.lastVisit) + '</div><div style="margin-top:6px">' + dogHtml + '</div></div><div class="actions"><button class="btn btn-outline btn-sm" onclick="viewCustomer(\'' + c.id + '\')">详情</button><button class="btn btn-primary btn-sm edit-only" onclick="editCustomer(\'' + c.id + '\')">编辑</button><button class="btn btn-danger btn-sm edit-only" onclick="deleteCustomer(\'' + c.id + '\')">删除</button></div></div>';
+  });
+  $('customerList').innerHTML = html;
+}
+
+function calcAge(birthday) {
+  var b = new Date(birthday);
+  var n = new Date();
+  var years = n.getFullYear() - b.getFullYear();
+  var months = n.getMonth() - b.getMonth();
+  if (months < 0) { years--; months += 12; }
+  if (years <= 0) return months + '个月';
+  return years + '岁' + (months > 0 ? months + '个月' : '');
+}
+
+function openCustomerForm() {
+  $('customerFormTitle').textContent = '添加客户';
+  renderCustomerForm();
+  $('modalCustomer').classList.add('show');
+}
+function editCustomer(id) {
+  var c = DB.customers.find(function(x){return x.id===id;});
+  if (!c) return;
+  $('customerFormTitle').textContent = '编辑客户';
+  renderCustomerForm(c);
+  $('modalCustomer').classList.add('show');
+}
+function renderCustomerForm(c) {
+  c = c || {};
+  var dogRows = '';
+  if (c.dogs && c.dogs.length > 0) {
+    c.dogs.forEach(function(d, i) {
+      dogRows += makeDogRow(d, i);
+    });
+  } else {
+    dogRows += makeDogRow({}, 0);
+  }
+  $('customerBody').innerHTML = ''
+    + '<input type="hidden" id="custId" value="' + (c.id||'') + '">'
+    + '<div class="form-row"><div class="form-group"><label>主人姓名 <span class="required">*</span></label><input type="text" id="custName" value="' + (c.ownerName||'') + '" placeholder="主人姓名"></div>'
+    + '<div class="form-group"><label>联系电话 <span class="required">*</span></label><input type="tel" id="custPhone" value="' + (c.phone||'') + '" placeholder="手机号"></div></div>'
+    + '<div class="form-row"><div class="form-group"><label>身份证号</label><input type="text" id="custIdCard" value="' + (c.idCard||'') + '" placeholder="身份证号（选填）"></div>'
+    + '<div class="form-group"><label>客户区域</label><select id="custArea"><option value="big"' + (c.area==='big'?' selected':'') + '>大狗区</option><option value="small"' + (c.area==='small'?' selected':'') + '>小狗区</option></select></div></div>'
+    + '<hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-light)">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><strong>🐶 狗狗信息</strong><button class="btn btn-primary btn-sm" onclick="addDogRow()">➕ 添加狗狗</button></div>'
+    + '<div id="dogRows">' + dogRows + '</div>';
+}
+
+function makeDogRow(d, i) {
+  return '<div class="dog-row" style="border:1px solid var(--gray-light);border-radius:8px;padding:12px;margin-bottom:8px" data-index="' + i + '">'
+    + '<input type="hidden" class="dog-id" value="' + (d.id||'') + '">'
+    + '<div class="form-row-3">'
+    + '<div class="form-group"><label>狗名 <span class="required">*</span></label><input type="text" class="dog-name" value="' + (d.name||'') + '" placeholder="狗名"></div>'
+    + '<div class="form-group"><label>品种</label><input type="text" class="dog-breed" value="' + (d.breed||'') + '" placeholder="品种"></div>'
+    + '<div class="form-group"><label>性别</label><select class="dog-gender"><option value="">未知</option><option value="公"' + (d.gender==='公'?' selected':'') + '>公</option><option value="母"' + (d.gender==='母'?' selected':'') + '>母</option></select></div>'
+    + '</div>'
+    + '<div class="form-row">'
+    + '<div class="form-group"><label>体重(kg)</label><input type="number" class="dog-weight" value="' + (d.weight||'') + '" placeholder="体重"></div>'
+    + '<div class="form-group"><label>🎂 生日</label><input type="date" class="dog-birthday" value="' + (d.birthday||'') + '" placeholder="生日"></div>'
+    + '</div>'
+    + '<button class="btn btn-danger btn-sm" onclick="removeDogRow(this)" style="margin-top:4px">🗑️ 删除此狗狗</button>'
+    + '</div>';
+}
+
+function addDogRow() {
+  var container = $('dogRows');
+  var div = document.createElement('div');
+  div.innerHTML = makeDogRow({}, container.children.length);
+  container.appendChild(div);
+}
+function removeDogRow(btn) {
+  var rows = $('dogRows').children;
+  if (rows.length <= 1) { showToast('至少保留一只狗狗'); return; }
+  btn.closest('.dog-row').remove();
+}
+
+function saveCustomer() {
+  var id = $('custId').value;
+  var name = $('custName').value.trim();
+  var phone = $('custPhone').value.trim();
+  var idCard = $('custIdCard').value.trim();
+  if (!name) { showToast('请填主人姓名'); return; }
+  if (!phone) { showToast('请填电话'); return; }
+  var dogs = [];
+  var dogRows = $('dogRows').children;
+  for (var i = 0; i < dogRows.length; i++) {
+    var row = dogRows[i];
+    var dName = row.querySelector('.dog-name').value.trim();
+    if (!dName) continue;
+    dogs.push({
+      id: row.querySelector('.dog-id').value || genId(),
+      name: dName,
+      breed: row.querySelector('.dog-breed').value.trim(),
+      gender: row.querySelector('.dog-gender').value,
+      weight: row.querySelector('.dog-weight').value,
+      birthday: row.querySelector('.dog-birthday').value
+    });
+  }
+  if (dogs.length === 0) { showToast('至少填一只狗狗'); return; }
+  if (id) {
+    var c = DB.customers.find(function(x){return x.id===id;});
+    if (c) { c.ownerName=name; c.phone=phone; c.idCard=idCard; c.area=$('custArea').value; c.dogs=dogs; c.notes=$('custNotes').value.trim(); }
+  } else {
+    DB.customers.push({ id:genId(), ownerName:name, phone:phone, idCard:idCard, area:$('custArea').value, dogs:dogs, visitCount:0, firstVisit:null, lastVisit:null, notes:$('custNotes').value.trim(), createdAt:now() });
+  }
+  saveDB(); closeModal('modalCustomer'); renderCustomers(); showToast('客户档案已保存');
+}
+
+function viewCustomer(id) {
+  var c = DB.customers.find(function(x){return x.id===id;});
+  if (!c) return;
+  // 获取该客户的订单历史
+  var orders = DB.orders.filter(function(o){return o.phone === c.phone;}).sort(function(a,b){return (b.createdAt||'').localeCompare(a.createdAt||'');});
+  var nowY = new Date().getFullYear();
+  var totalConsumption = orders.filter(function(o){return o.status==='checked-out';}).reduce(function(s,o){return s+(o.paidAmount||0);},0);
+  var yearConsumption = orders.filter(function(o){return o.status==='checked-out' && o.checkOut && new Date(o.checkOut).getFullYear()===nowY;}).reduce(function(s,o){return s+(o.paidAmount||0);},0);
+  var html = '<div class="alert alert-info"><strong>👤 客户详情</strong></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">';
+  html += '<div><strong>主人：</strong>'+c.ownerName+'</div><div><strong>电话：</strong>'+c.phone+'</div>';
+  html += '<div><strong>身份证：</strong>'+(c.idCard||'-')+'</div><div><strong>区域：</strong>'+(c.area==='big'?'大狗区':'小狗区')+'</div>';
+  html += '<div><strong>到访次数：</strong>'+(c.visitCount||0)+'</div><div><strong>总消费：</strong>¥'+totalConsumption+'</div>';
+  html += '<div><strong>'+nowY+'年消费：</strong>¥'+yearConsumption+'</div><div><strong>最近到访：</strong>'+formatDate(c.lastVisit)+'</div></div>';
+  if (c.dogs && c.dogs.length > 0) {
+    html += '<h4 style="margin:16px 0 8px">🐶 狗狗信息</h4><table><thead><tr><th>名字</th><th>品种</th><th>性别</th><th>体重</th><th>生日</th><th>年龄</th></tr></thead><tbody>';
+    c.dogs.forEach(function(d) {
+      html += '<tr><td><strong>'+d.name+'</strong></td><td>'+(d.breed||'-')+'</td><td>'+(d.gender||'-')+'</td><td>'+(d.weight||'-')+'kg</td><td>'+(d.birthday?formatDate(d.birthday):'-')+'</td><td>'+(d.birthday?calcAge(d.birthday):'-')+'</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  if (orders.length > 0) {
+    html += '<h4 style="margin:16px 0 8px">📋 寄养历史（'+orders.length+'次）</h4><table><thead><tr><th>房间</th><th>入住</th><th>退房</th><th>天数</th><th>金额</th><th>状态</th></tr></thead><tbody>';
+    orders.forEach(function(o) {
+      var days = o.days || (o.checkIn && o.expectedCheckOut ? daysBetween(o.checkIn, o.expectedCheckOut) : '-');
+      html += '<tr><td>'+o.roomId+'</td><td>'+formatDate(o.checkIn)+'</td><td>'+formatDate(o.checkOut||o.expectedCheckOut)+'</td><td>'+days+'</td><td>'+(o.totalFee?'¥'+o.totalFee:'-')+'</td><td>'+o.status+'</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  if (c.notes) html += '<div class="alert alert-warning"><strong>备注：</strong>'+c.notes+'</div>';
+  $('modalRoomTitle').textContent = '客户详情';
+  $('modalRoomBody').innerHTML = html;
+  $('modalRoomFooter').innerHTML = '<button class="btn btn-outline" onclick="closeModal(\'modalRoom\')">关闭</button>';
+  $('modalRoom').classList.add('show');
+}
+
+function deleteCustomer(id) {
+  showConfirm('删除客户', '确定删除此客户档案？相关订单记录会保留。', function() {
+    DB.customers = DB.customers.filter(function(c){return c.id !== id;});
+    saveDB(); renderCustomers(); showToast('客户已删除');
+  });
+}
+
+// ==================== 设置 ====================
+function renderSettings() {
+  var html = '<table><thead><tr><th>区域</th><th>子区</th><th>房型</th><th>间数</th><th>平时价</th><th>十一价</th><th>春节价</th><th>包月</th><th>包年</th></tr></thead><tbody>';
+  ['big','small'].forEach(function(ak) {
+    ROOM_CONFIG[ak].areas.forEach(function(a) {
+      var pc = DB.prices[a.type] || { normal: a.price, holiday: a.holidayPrice, spring: a.springPrice, monthly: a.monthlyPrice, yearly: a.yearlyPrice };
+      html += '<tr><td>'+ROOM_CONFIG[ak].name+'</td><td>'+a.label+'</td><td style="font-size:12px">'+a.type+'</td><td>'+a.rooms.length+'间</td>'
+        + '<td><input type="number" value="'+pc.normal+'" onchange="updatePriceField(\''+a.type+'\',\'normal\',this.value)" style="width:65px;padding:3px 6px;border:1px solid #DDD;border-radius:4px"></td>'
+        + '<td><input type="number" value="'+pc.holiday+'" onchange="updatePriceField(\''+a.type+'\',\'holiday\',this.value)" style="width:65px;padding:3px 6px;border:1px solid #DDD;border-radius:4px"></td>'
+        + '<td><input type="number" value="'+pc.spring+'" onchange="updatePriceField(\''+a.type+'\',\'spring\',this.value)" style="width:65px;padding:3px 6px;border:1px solid #DDD;border-radius:4px"></td>'
+        + '<td><input type="number" value="'+pc.monthly+'" onchange="updatePriceField(\''+a.type+'\',\'monthly\',this.value)" style="width:65px;padding:3px 6px;border:1px solid #DDD;border-radius:4px"></td>'
+        + '<td><input type="number" value="'+pc.yearly+'" onchange="updatePriceField(\''+a.type+'\',\'yearly\',this.value)" style="width:65px;padding:3px 6px;border:1px solid #DDD;border-radius:4px"></td></tr>';
+    });
+  });
+  html += '</tbody></table>';
+  $('priceSettings').innerHTML = html;
+
+  // 别墅名称管理
+  var villaHtml = '<table><thead><tr><th>编号</th><th>当前名称</th><th>新名称</th><th>操作</th></tr></thead><tbody>';
+  ['别墅1','别墅2','别墅3','别墅4','别墅5','别墅6','别墅7','别墅8'].forEach(function(v) {
+    var displayName = DB.villaNames[v] || v;
+    villaHtml += '<tr><td>'+v+'</td><td>'+displayName+'</td><td><input type="text" id="villaName_'+v.replace(/\s/g,'')+'" placeholder="新名称" style="width:120px;padding:4px 8px;border:1px solid #DDD;border-radius:4px"></td><td><button class="btn btn-primary btn-sm" onclick="updateVillaName(\''+v+'\')">保存</button></td></tr>';
+  });
+  villaHtml += '</tbody></table>';
+  $('villaNamesSettings').innerHTML = villaHtml;
+
+  // 员工列表
+  renderStaffList();
+
+  var totalRooms = Object.keys(DB.rooms).length;
+  $('systemStats').innerHTML = '<div>🏠 房间总数：<strong>'+totalRooms+'</strong>间</div><div>📋 订单总数：<strong>'+DB.orders.length+'</strong>条</div><div>🦴 狗粮品牌：<strong>'+DB.foodBrands.length+'</strong>个</div><div>📜 进销记录：<strong>'+DB.foodRecords.length+'</strong>条</div><div>👤 客户档案：<strong>'+DB.customers.length+'</strong>个</div><div>🐶 狗狗档案：<strong>'+DB.customers.reduce(function(s,c){return s+(c.dogs||[]).length;},0)+'</strong>只</div><div>💇 员工：<strong>'+DB.staff.filter(function(s){return s.active!==false;}).length+'</strong>人</div><div>📊 入住率历史：<strong>'+(DB.history||[]).length+'</strong>天</div><div>💾 数据大小：<strong>'+(JSON.stringify(DB).length/1024).toFixed(1)+'KB</strong></div>';
+}
+function updatePriceField(type, field, val) {
+  if (!DB.prices[type]) DB.prices[type] = {};
+  DB.prices[type][field] = parseFloat(val)||0;
+  saveDB(); showToast('价格已更新');
+}
+function updateVillaName(oldName) {
+  var newName = $('villaName_'+oldName.replace(/\s/g,'')).value.trim();
+  if (!newName) { showToast('请输入新名称'); return; }
+  DB.villaNames[oldName] = newName;
+  // 同步更新房间label
+  if (DB.rooms[oldName]) {
+    DB.rooms[oldName].label = '别墅区 ' + newName;
+  }
+  saveDB(); renderSettings(); showToast('别墅名称已更新：「'+oldName+'」→「'+newName+'」');
+}
+function addStaff() {
+  var name = $('staffNameInput').value.trim();
+  if (!name) { showToast('请输入员工名字'); return; }
+  if (DB.staff.find(function(s){return s.name===name&&s.active!==false;})) { showToast('该员工已存在'); return; }
+  DB.staff.push({ id: genId(), name: name, active: true, createdAt: now() });
+  saveDB(); $('staffNameInput').value = ''; renderStaffList(); showToast('员工「'+name+'」已添加');
+}
+function removeStaff(id) {
+  var s = DB.staff.find(function(x){return x.id===id;});
+  if (!s) return;
+  showConfirm('移除员工', '确定移除「'+s.name+'」？历史记录保留。', function() {
+    s.active = false;
+    saveDB(); renderStaffList(); showToast('员工「'+s.name+'」已移除');
+  });
+}
+function renderStaffList() {
+  var staff = DB.staff || [];
+  var activeStaff = staff.filter(function(s){return s.active !== false;});
+  var inactiveStaff = staff.filter(function(s){return s.active === false;});
+  var html = '';
+  if (activeStaff.length === 0) html += '<div style="color:var(--gray);padding:8px 0">暂无员工，请添加</div>';
+  activeStaff.forEach(function(s) {
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-light)"><span style="font-size:16px">💇</span><strong>'+s.name+'</strong><span style="font-size:12px;color:var(--gray)">入职：'+(s.createdAt||'-')+'</span><button class="btn btn-danger btn-sm" onclick="removeStaff(\''+s.id+'\')">移除</button></div>';
+  });
+  if (inactiveStaff.length > 0) {
+    html += '<div style="margin-top:12px;color:var(--gray)">已离职：</div>';
+    inactiveStaff.forEach(function(s) {
+      html += '<div style="padding:4px 0;color:var(--gray);font-size:13px">'+s.name+'</div>';
+    });
+  }
+  $('staffList').innerHTML = html;
+}
+
+// ==================== 数据导入导出 ====================
+function manualSync() {
+  $('syncStatus').textContent = '正在上传到云端...';
+  syncToCloud();
+  setTimeout(function() {
+    $('syncStatus').textContent = '✅ 上传完成！员工刷新即可看到最新数据（' + new Date().toLocaleTimeString() + '）';
+    showToast('数据已同步到云端');
+  }, 2000);
+}
+
+function exportData() {
+  var data = JSON.stringify(DB, null, 2);
+  var blob = new Blob([data], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = '郊野宠物寄养数据备份_'+today()+'.json'; a.click();
+  URL.revokeObjectURL(url); showToast('数据已导出');
+}
+function importData(event) {
+  var file = event.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      showConfirm('导入数据', '确定导入？将覆盖当前数据。', function() {
+        DB = data;
+        DB.rooms=DB.rooms||{};DB.orders=DB.orders||[];DB.foodBrands=DB.foodBrands||[];DB.foodRecords=DB.foodRecords||[];DB.prices=DB.prices||{};DB.history=DB.history||[];DB.customers=DB.customers||[];
+        initRooms(); initDefaultPrices(); saveDB(); renderSettings(); showToast('导入成功');
+      });
+    } catch(err) { showToast('文件格式错误'); }
+  };
+  reader.readAsText(file); event.target.value = '';
+}
+function confirmReset() {
+  showConfirm('清空数据', '⚠️ 确定清空？不可恢复！建议先导出备份。', function() {
+    DB = {rooms:{},orders:[],foodBrands:[],foodRecords:[],prices:{},history:[],customers:[]};
+    initRooms(); initDefaultPrices(); saveDB(); renderSettings(); showToast('已清空');
+  }, '⚠️');
+}
+
+// ==================== Excel 批量导入 ====================
+var excelImportData = [];
+
+function handleExcelImport(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  if (typeof XLSX === 'undefined') { showToast('正在加载Excel解析库，请稍后再试...'); event.target.value=''; return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var wb = XLSX.read(e.target.result, {type:'array'});
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      if (rows.length < 2) { showToast('Excel为空，请检查文件'); event.target.value=''; return; }
+      // 第一行是表头
+      var headers = rows[0].map(function(h){return String(h).trim();});
+      // 列映射
+      var colMap = {};
+      var colNames = ['主人姓名','电话','身份证号','区域','狗名','品种','性别','体重(kg)','生日','备注'];
+      colNames.forEach(function(cn) { colMap[cn] = -1; });
+      headers.forEach(function(h, i) {
+        if (colMap.hasOwnProperty(h)) colMap[h] = i;
+      });
+      if (colMap['主人姓名'] === -1 && colMap['电话'] === -1) { showToast('未识别到「主人姓名」或「电话」列，请检查表头格式'); event.target.value=''; return; }
+      // 解析数据
+      var data = [];
+      var skipCount = 0;
+      for (var r = 1; r < rows.length; r++) {
+        var row = rows[r];
+        if (!row || row.length === 0) continue;
+        var name = String(colMap['主人姓名']>=0 ? (row[colMap['主人姓名']]||'') : '').trim();
+        var phone = String(colMap['电话']>=0 ? (row[colMap['电话']]||'') : '').trim();
+        if (!name && !phone) { skipCount++; continue; }
+        var areaVal = String(colMap['区域']>=0 ? (row[colMap['区域']]||'') : '').trim();
+        var area = (areaVal.includes('大') || areaVal.includes('big')) ? 'big' : ((areaVal.includes('小') || areaVal.includes('small')) ? 'small' : 'big');
+        var dogName = String(colMap['狗名']>=0 ? (row[colMap['狗名']]||'') : '').trim();
+        var breed = String(colMap['品种']>=0 ? (row[colMap['品种']]||'') : '').trim();
+        var gender = String(colMap['性别']>=0 ? (row[colMap['性别']]||'') : '').trim();
+        var weight = colMap['体重(kg)']>=0 ? row[colMap['体重(kg)']] : '';
+        var birthday = colMap['生日']>=0 ? row[colMap['生日']] : '';
+        var notes = String(colMap['备注']>=0 ? (row[colMap['备注']]||'') : '').trim();
+        var idCard = String(colMap['身份证号']>=0 ? (row[colMap['身份证号']]||'') : '').trim();
+        // 格式化生日
+        if (birthday && typeof birthday === 'number') {
+          var bd = XLSX.SSF.parse_date_code(birthday);
+          birthday = bd.y + '-' + String(bd.m).padStart(2,'0') + '-' + String(bd.d).padStart(2,'0');
+        } else if (birthday) {
+          birthday = String(birthday).trim();
+        }
+        data.push({ownerName:name, phone:phone, idCard:idCard, area:area, dogName:dogName, breed:breed, gender:gender, weight:weight, birthday:birthday, notes:notes});
+      }
+      if (data.length === 0) { showToast('未识别到有效数据，请检查Excel格式'); event.target.value=''; return; }
+      // 按电话合并多狗
+      var merged = {};
+      data.forEach(function(d) {
+        var key = d.phone || d.ownerName;
+        if (!merged[key]) {
+          merged[key] = {ownerName:d.ownerName, phone:d.phone, idCard:d.idCard, area:d.area, dogs:[], notes:d.notes};
+        }
+        if (d.idCard && !merged[key].idCard) merged[key].idCard = d.idCard;
+        if (d.dogName) {
+          merged[key].dogs.push({id:genId(), name:d.dogName, breed:d.breed, gender:d.gender, weight:d.weight, birthday:d.birthday});
+        }
+        if (d.notes && !merged[key].notes) merged[key].notes = d.notes;
+      });
+      excelImportData = Object.values(merged);
+      // 显示预览
+      showExcelPreview(excelImportData, skipCount);
+    } catch(err) {
+      showToast('解析Excel失败：'+err.message);
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  event.target.value = '';
+}
+
+function showExcelPreview(data, skipCount) {
+  var html = '<div class="alert alert-info"><strong>📊 解析结果：</strong>共识别 <strong>'+data.length+'</strong> 个客户' + (skipCount>0?'（跳过 '+skipCount+' 空行）':'') + '</div>';
+  html += '<div class="alert alert-warning">⚠️ 请仔细核对以下数据，确认无误后点击「确认导入」。已有客户（相同手机号）将自动更新。</div>';
+  html += '<div style="max-height:400px;overflow-y:auto"><table><thead><tr><th>#</th><th>主人</th><th>电话</th><th>身份证</th><th>区域</th><th>狗狗</th><th>备注</th></tr></thead><tbody>';
+  data.forEach(function(c, i) {
+    var dogStr = (c.dogs||[]).map(function(d){
+      var parts = [d.name];
+      if (d.breed) parts.push(d.breed);
+      if (d.gender) parts.push(d.gender);
+      if (d.weight) parts.push(d.weight+'kg');
+      if (d.birthday) parts.push('🎂'+d.birthday);
+      return parts.join(' · ');
+    }).join('<br>');
+    html += '<tr><td>'+(i+1)+'</td><td><strong>'+c.ownerName+'</strong></td><td>'+c.phone+'</td><td>'+(c.idCard||'-')+'</td><td>'+(c.area==='big'?'大狗区':'小狗区')+'</td><td style="font-size:13px">'+dogStr+'</td><td>'+(c.notes||'-')+'</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  $('excelImportBody').innerHTML = html;
+  $('modalExcelImport').classList.add('show');
+}
+
+function confirmExcelImport() {
+  if (excelImportData.length === 0) { showToast('没有数据可导入'); return; }
+  var imported = 0, updated = 0, newDogs = 0;
+  excelImportData.forEach(function(d) {
+    var existing = DB.customers.find(function(c){return c.phone === d.phone;});
+    if (existing) {
+      existing.ownerName = d.ownerName;
+      if (d.idCard) existing.idCard = d.idCard;
+      if (d.notes) existing.notes = d.notes;
+      if (d.area) existing.area = d.area;
+      (d.dogs||[]).forEach(function(nd) {
+        var ed = (existing.dogs||[]).find(function(x){return x.name===nd.name;});
+        if (ed) {
+          if (nd.breed) ed.breed = nd.breed;
+          if (nd.gender) ed.gender = nd.gender;
+          if (nd.weight) ed.weight = nd.weight;
+          if (nd.birthday) ed.birthday = nd.birthday;
+        } else {
+          existing.dogs = existing.dogs || [];
+          existing.dogs.push({id:genId(), name:nd.name, breed:nd.breed||'', gender:nd.gender||'', weight:nd.weight||'', birthday:nd.birthday||''});
+          newDogs++;
+        }
+      });
+      updated++;
+    } else {
+      DB.customers.push({
+        id: genId(), ownerName: d.ownerName, phone: d.phone, idCard: d.idCard||'',
+        dogs: (d.dogs||[]).map(function(nd){return {id:genId(), name:nd.name, breed:nd.breed||'', gender:nd.gender||'', weight:nd.weight||'', birthday:nd.birthday||''};}),
+        area: d.area||'big', visitCount: 0, firstVisit: null, lastVisit: null,
+        notes: d.notes||'', createdAt: now()
+      });
+      imported++;
+    }
+  });
+  saveDB();
+  closeModal('modalExcelImport');
+  renderCustomers();
+  showToast('导入成功！新增 '+imported+' 个客户，更新 '+updated+' 个客户'+(newDogs>0?'（含 '+newDogs+' 只新狗狗）':''));
+  excelImportData = [];
+}
+
+// ==================== Excel 导出客户 ====================
+function exportCustomersExcel() {
+  if (typeof XLSX === 'undefined') { showToast('正在加载Excel库，请稍后再试...'); return; }
+  if (DB.customers.length === 0) { showToast('暂无客户数据可导出'); return; }
+  // 构建导出数据：每只狗一行，同一主人的多只狗分别列出
+  var rows = [];
+  DB.customers.forEach(function(c) {
+    var dogs = c.dogs && c.dogs.length > 0 ? c.dogs : [{name:'',breed:'',gender:'',weight:'',birthday:''}];
+    dogs.forEach(function(d) {
+      rows.push({
+        '主人姓名': c.ownerName || '',
+        '电话': c.phone || '',
+        '身份证号': c.idCard || '',
+        '区域': c.area === 'small' ? '小狗区' : '大狗区',
+        '狗名': d.name || '',
+        '品种': d.breed || '',
+        '性别': d.gender || '',
+        '体重(kg)': d.weight || '',
+        '生日': d.birthday || '',
+        '备注': c.notes || ''
+      });
+    });
+  });
+  var ws = XLSX.utils.json_to_sheet(rows);
+  // 设置列宽
+  ws['!cols'] = [
+    {wch:12},{wch:16},{wch:22},{wch:10},{wch:10},{wch:12},
+    {wch:8},{wch:12},{wch:14},{wch:24}
+  ];
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '客户数据');
+  var filename = '客户数据导出_' + today() + '.xlsx';
+  XLSX.writeFile(wb, filename);
+  showToast('已导出 ' + DB.customers.length + ' 个客户数据');
+}
+
+// ==================== 初始化 ====================
+loadDB();
+$('topDate').textContent = new Date().toLocaleDateString('zh-CN', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
+
+// 查看模式：从云端拉取数据，每30秒刷新
+if (APP_MODE === 'view') {
+  // 显示加载中
+  renderDashboard();
+  syncFromCloud(function(ok) {
+    if (ok) {
+      renderDashboard();
+      showToast('数据已从云端同步');
+    } else {
+      showToast('云端数据加载失败，显示本地数据');
+    }
+  });
+  // 每30秒自动同步
+  setInterval(function() {
+    syncFromCloud(function(ok) {
+      if (ok) {
+        if ($('page-dashboard').classList.contains('active')) renderDashboard();
+        if ($('page-booking').classList.contains('active')) { renderRoomBoard(); renderOrders(); }
+        if ($('page-food').classList.contains('active')) renderFoodPage();
+        if ($('page-customer').classList.contains('active')) renderCustomers();
+      }
+    });
+  }, 30000);
+} else {
+  // 编辑模式：启动时从云端拉取最新数据（合并本地）
+  syncFromCloud(function(ok) {
+    if (ok) {
+      saveDB(); // 保存到本地
+      renderDashboard();
+      console.log('已从云端同步最新数据');
+    } else {
+      renderDashboard();
+    }
+  });
+  // 每60秒同步一次
+  setInterval(function() { syncFromCloud(function(ok) { if (ok) { renderDashboard(); renderRoomBoard(); renderOrders(); } }); }, 60000);
+}
+
+setInterval(function() { if ($('page-dashboard').classList.contains('active')) renderDashboard(); }, 60000);
+
+// ==================== PWA 安装 ====================
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+window.showInstallPrompt = function() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(result) {
+      if (result.outcome === 'accepted') showToast('安装成功！可在桌面找到应用图标');
+      deferredPrompt = null;
+    });
+  } else {
+    showToast('应用已安装，或浏览器不支持。请在浏览器菜单中选择「添加到桌面」');
+  }
+};
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    var swUrl = URL.createObjectURL(new Blob([
+      'self.addEventListener("install",function(e){self.skipWaiting()});',
+      'self.addEventListener("activate",function(e){e.waitUntil(clients.claim())});',
+      'self.addEventListener("fetch",function(e){e.respondWith(caches.match(e.request).then(function(r){return r||fetch(e.request)}))});'
+    ].join('\n'), {type: 'application/javascript'}));
+    navigator.serviceWorker.register(swUrl, {scope: '/'}).catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
